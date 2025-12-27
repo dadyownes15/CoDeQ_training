@@ -2,7 +2,7 @@
 
 This is the official Pytorch implementation of 
 "[CoDeQ: End-to-End Joint Model Compression with Dead-Zone Quantizer for
-High-Sparsity and Low-Precision Networks](https://arxiv.org/pdf/2512.12981)", Wenshøj et al. 2025.
+High-Sparsity and Low-Precision Networks](https://arxiv.org/abs/2512.12981)", Wenshøj et al. 2025.
 
 ![results](utils/fig1.png)
 
