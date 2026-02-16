@@ -12,6 +12,8 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -43,7 +45,7 @@ def _compute_unstructured_sparsity(model: nn.Module) -> float:
     zeros = 0
     for m in model.modules():
         if isinstance(m, nn.Conv2d) and hasattr(m, 'parametrizations'):
-            w = m.weight.detach()
+            w = m.weight.detach().cpu()
             total += w.numel()
             zeros += (w == 0).sum().item()
     if total == 0:
@@ -69,7 +71,7 @@ def _compute_structured_sparsity(model: nn.Module) -> float:
     dead_channels = 0
     for m in model.modules():
         if isinstance(m, nn.Conv2d) and hasattr(m, 'parametrizations'):
-            w = m.weight.detach()
+            w = m.weight.detach().cpu()
             c_out = w.shape[0]
             alive = w.flatten(1).norm(p=2, dim=1) > 0
             total_channels += c_out
@@ -195,9 +197,9 @@ def main():
     test_set = torchvision.datasets.CIFAR10(
         root='./data', train=False, download=True, transform=transform_test)
     train_loader = torch.utils.data.DataLoader(
-        train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
+        train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=(device == "cuda"))
     test_loader = torch.utils.data.DataLoader(
-        test_set, batch_size=BATCH_SIZE, shuffle=False, num_workers=2, pin_memory=True)
+        test_set, batch_size=BATCH_SIZE, shuffle=False, num_workers=2, pin_memory=(device == "cuda"))
 
     # --- Model ---
     model = resnet20()
@@ -305,6 +307,7 @@ def main():
 
     # --- Final evaluation with Evaluator ---
     print("\n--- Final Compression Metrics ---")
+    model.cpu()  # Evaluator needs model on CPU for spatial dim profiling
     result = evaluator.evaluate(model)
     print(f"Structured BOPs compression:   {result.structured_bops_ratio:.2f}x")
     print(f"Unstructured BOPs compression: {result.unstructured_bops_ratio:.2f}x")
