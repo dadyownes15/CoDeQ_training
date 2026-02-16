@@ -1,0 +1,176 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{booktabs}
+
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\R}{\mathbb{R}}
+
+\title{Structured Sparsity Losses for ResNet Pruning:\\Independent vs.\ Coupled Formulations}
+\author{CoDeQ Experiment Framework}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Notation}
+
+Consider a convolutional layer $l$ with weight tensor
+$W_l \in \R^{c_{\text{out}} \times c_{\text{in}} \times k \times k}$.
+We write $W_l[c, :, :, :]$ for output filter $c$ and
+$W_l[:, c, :, :]$ for input channel $c$.
+
+\section{Independent Per-Layer Losses}
+
+These losses penalise each layer independently,
+ignoring skip-connection entanglement.
+
+\subsection{Channel-Level Group Lasso}
+
+\begin{equation}
+  \mathcal{L}_{\text{channel}} = \sum_{l} \sum_{c=1}^{c_{\text{out}}^{(l)}}
+    \norm{W_l[c, :, :, :]}_2
+\end{equation}
+
+This is the $\ell_{2,1}$ mixed norm: L2 within each output filter,
+L1 across filters. Drives entire output filters to zero.
+
+\subsection{Block-Level Group Lasso}
+
+\begin{equation}
+  \mathcal{L}_{\text{block}} = \sum_{l}
+    \sum_{j=0}^{\lceil c_{\text{out}}^{(l)} / B \rceil - 1}
+    \norm{W_l[jB : (j+1)B, :, :, :]}_2
+\end{equation}
+
+where $B$ is the block size. Groups consecutive output channels
+and penalises each block jointly.
+
+\subsection{Kernel-Level L1}
+
+\begin{equation}
+  \mathcal{L}_{\text{kernel}} = \sum_{l} \sum_{o=1}^{c_{\text{out}}^{(l)}}
+    \sum_{i=1}^{c_{\text{in}}^{(l)}} \norm{W_l[o, i, :, :]}_1
+\end{equation}
+
+Finest granularity---encourages individual $k \times k$ kernels to zero.
+
+\section{Skip-Connection Entanglement}
+
+\subsection{The Problem}
+
+In a ResNet BasicBlock with identity shortcut:
+\begin{equation}
+  y = F(x) + x, \qquad F(x) = \text{BN}(\text{conv2}(\text{ReLU}(\text{BN}(\text{conv1}(x)))))
+\end{equation}
+
+Channel $c$ of the output $y$ is:
+\begin{equation}
+  y_c = F(x)_c + x_c
+\end{equation}
+
+Channel $c$ is only zero (structurally prunable) if \textbf{both}:
+\begin{enumerate}
+  \item $F(x)_c = 0$ for all inputs --- i.e., output filter $c$ of conv2
+        has all-zero weights (given non-null inputs).
+  \item $x_c = 0$ for all inputs --- i.e., channel $c$ was already null
+        at the block input.
+\end{enumerate}
+
+This creates \textbf{entangled channel groups}: within a residual layer group
+(e.g.\ \texttt{layer1} with $N$ blocks sharing the same channel count),
+channel $c$ flows through every identity shortcut unchanged. Pruning it
+requires zeroing the corresponding weights in \emph{every} block.
+
+\subsection{LambdaLayer Shortcuts (Stride Boundaries)}
+
+At stride boundaries, the CIFAR ResNet uses option~A:
+\begin{equation}
+  \text{shortcut}(x) = \text{pad}\bigl(x[:, :, ::2, ::2],
+    \; (0,0,0,0, \lfloor c_{\text{out}}/4 \rfloor,
+    \lfloor c_{\text{out}}/4 \rfloor)\bigr)
+\end{equation}
+
+This maps $c_{\text{in}}$ input channels to $c_{\text{out}}$ channels:
+\begin{equation}
+  \text{shortcut}_c = \begin{cases}
+    0 & c < \text{pad} \quad \text{(zero-padded, always null)} \\
+    x_{c - \text{pad}} & \text{pad} \le c < \text{pad} + c_{\text{in}} \\
+    0 & c \ge \text{pad} + c_{\text{in}} \quad \text{(zero-padded, always null)}
+  \end{cases}
+\end{equation}
+
+The padded channels are always null on the shortcut side, so they are
+\textbf{not entangled}---the residual branch alone determines whether
+those channels survive. Only the middle $c_{\text{in}}$ channels
+are coupled to the previous layer group.
+
+\section{Coupled Group Lasso}
+
+\subsection{Channel Groups}
+
+For each residual layer group (e.g.\ \texttt{layer1}) with $N$ blocks
+and $C$ channels, define $C$ channel groups. Group $g_c$ contains:
+
+\begin{equation}
+  g_c = \bigcup_{n=1}^{N} \Bigl\{
+    \underbrace{W_{\text{conv2}}^{(n)}[c, :, :, :]}_{\text{output filter } c}
+  \Bigr\}
+  \;\cup\;
+  \bigcup_{n=2}^{N} \Bigl\{
+    \underbrace{W_{\text{conv1}}^{(n)}[:, c, :, :]}_{\text{input channel } c}
+  \Bigr\}
+\end{equation}
+
+The first block's conv1 input channels belong to the
+\emph{previous} layer group's coupling and are not included here.
+
+\subsection{Loss Function}
+
+Concatenate all weight slices in each group into a single vector
+$\mathbf{w}_g$ and take the L2 norm:
+
+\begin{equation}
+  \mathcal{L}_{\text{coupled}} =
+    \sum_{g \in \mathcal{G}} \norm{\mathbf{w}_g}_2
+    + \sum_{l \in \mathcal{U}}
+      \sum_{c=1}^{c_{\text{out}}^{(l)}} \norm{W_l[c, :, :, :]}_2
+\end{equation}
+
+where $\mathcal{G}$ is the set of coupled channel groups and
+$\mathcal{U}$ is the set of uncoupled layers (stem conv1, classifier).
+The second term applies standard channel group lasso to layers
+not involved in skip connections.
+
+\subsection{Why This Works}
+
+The joint L2 norm means the gradient for channel~$c$ is:
+\begin{equation}
+  \frac{\partial \mathcal{L}_{\text{coupled}}}
+       {\partial W_l[c, \cdot]}
+  = \frac{W_l[c, \cdot]}{\norm{\mathbf{w}_{g_c}}_2}
+\end{equation}
+
+All weights in group $g_c$ share the \textbf{same denominator}.
+When any weight in the group is large, the gradient on all other
+weights in the group is suppressed---the loss encourages the entire
+group to shrink together. This is exactly the group lasso property,
+but applied across skip-connection boundaries.
+
+\section{Summary}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llll}
+\toprule
+\textbf{Loss} & \textbf{Granularity} & \textbf{Skip-aware?} & \textbf{Use case} \\
+\midrule
+$\mathcal{L}_{\text{channel}}$ & Output filter & No & Baseline \\
+$\mathcal{L}_{\text{block}}$ & Block of $B$ filters & No & Coarser pruning \\
+$\mathcal{L}_{\text{kernel}}$ & Individual $k \times k$ & No & Fine-grained \\
+$\mathcal{L}_{\text{coupled}}$ & Entangled channel group & Yes & Structured pruning \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}
