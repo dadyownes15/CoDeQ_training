@@ -403,10 +403,21 @@ git commit -m "feat: add schedule factories for sparsity coefficients"
 Create `tests/test_sparsity.py`:
 
 ```python
-"""Tests for structured sparsity loss functions."""
+"""Tests for structured sparsity loss functions.
+
+Tests cover three independent per-layer losses (group_lasso_channels,
+group_lasso_blocks, l1_kernel_sparsity) and the skip-connection-aware
+coupled_group_lasso that penalizes entangled channel groups jointly.
+"""
 import torch
 import torch.nn as nn
-from experiments.sparsity import group_lasso_channels, group_lasso_blocks, l1_kernel_sparsity
+from experiments.sparsity import (
+    group_lasso_channels,
+    group_lasso_blocks,
+    l1_kernel_sparsity,
+    coupled_group_lasso,
+)
+from resnet import ResNet, BasicBlock
 
 
 class TinyConvNet(nn.Module):
@@ -419,6 +430,10 @@ class TinyConvNet(nn.Module):
     def forward(self, x):
         return self.conv2(self.conv1(x))
 
+
+# ---------------------------------------------------------------------------
+# Independent per-layer losses
+# ---------------------------------------------------------------------------
 
 def test_group_lasso_channels_zero_model():
     """All weights zero → loss = 0."""
@@ -519,6 +534,77 @@ def test_l1_kernel_sparsity_value():
             nn.init.ones_(m.weight)
     loss = l1_kernel_sparsity(model)
     assert abs(loss.item() - 396.0) < 1e-4
+
+
+# ---------------------------------------------------------------------------
+# Coupled group lasso (skip-connection aware)
+# ---------------------------------------------------------------------------
+
+def test_coupled_group_lasso_gradient_flows():
+    """Loss should have gradients w.r.t. all conv weights in a ResNet."""
+    model = ResNet(BasicBlock, [1, 1, 1])
+    fn = coupled_group_lasso(model)
+    loss = fn(model)
+    loss.backward()
+    for name, m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            assert m.weight.grad is not None, f"No gradient for {name}"
+
+
+def test_coupled_group_lasso_zero_model():
+    """All weights zero → loss = 0."""
+    model = ResNet(BasicBlock, [1, 1, 1])
+    with torch.no_grad():
+        for m in model.modules():
+            if isinstance(m, nn.Conv2d):
+                m.weight.zero_()
+    fn = coupled_group_lasso(model)
+    loss = fn(model)
+    assert loss.item() == 0.0
+
+
+def test_coupled_group_lasso_positive():
+    """Non-zero weights → positive loss."""
+    model = ResNet(BasicBlock, [1, 1, 1])
+    fn = coupled_group_lasso(model)
+    loss = fn(model)
+    assert loss.item() > 0.0
+
+
+def test_coupled_penalizes_same_channel_across_block():
+    """Coupled loss for channel c should include weights from both conv2
+    output channel c AND the conv1 input channel c of the next layer.
+
+    In a ResNet with identity shortcut, channel c at the block output
+    is entangled: conv2 output c feeds the add, and the shortcut passes
+    channel c from the block input unchanged. So pruning channel c
+    requires zeroing conv2[c, :, :, :] AND all downstream layers that
+    consume channel c.
+
+    The coupled loss groups these together, so it should produce a
+    DIFFERENT value than summing independent per-layer norms.
+    """
+    model = ResNet(BasicBlock, [2, 1, 1])
+    fn_coupled = coupled_group_lasso(model)
+    loss_coupled = fn_coupled(model)
+
+    # Independent loss (for comparison — should differ)
+    loss_independent = group_lasso_channels(model)
+
+    # They should differ because the coupled loss groups weights
+    # across layers into joint norms rather than summing separate norms
+    assert loss_coupled.item() != loss_independent.item()
+
+
+def test_coupled_handles_lambda_shortcut():
+    """At stride boundaries (LambdaLayer shortcut), the padded channels
+    are always zero on the shortcut side, so the loss should still work.
+    """
+    model = ResNet(BasicBlock, [1, 1, 1])  # has LambdaLayer at layer2, layer3
+    fn = coupled_group_lasso(model)
+    loss = fn(model)
+    assert loss.item() > 0.0
+    loss.backward()  # should not error
 ```
 
 **Step 2: Run tests to verify they fail**
@@ -531,13 +617,31 @@ Expected: ModuleNotFoundError — `experiments.sparsity` does not exist
 ```python
 """Structured sparsity loss functions.
 
-Each function has signature: fn(model: nn.Module) -> torch.Tensor (scalar loss).
-For parameterized variants, a factory function returns the loss function.
+Two categories:
+
+1. **Independent per-layer losses**: penalize each Conv2d layer's weights
+   independently. Simple but ignore skip-connection entanglement — sparsity
+   in conv2 output channels may not translate to structured speedup if the
+   identity shortcut keeps those channels alive.
+
+2. **Coupled losses**: group weights that are entangled via residual
+   connections and penalize each group jointly. A channel can only be
+   structurally pruned if ALL weights contributing to it (across the
+   residual and shortcut paths) are zero.
+
+All functions have signature: fn(model: nn.Module) -> torch.Tensor (scalar).
+For parameterized/architecture-aware variants, a factory returns the fn.
 """
 import torch
 import torch.nn as nn
 from typing import Callable
 
+from resnet import BasicBlock, LambdaLayer
+
+
+# ---------------------------------------------------------------------------
+# Independent per-layer losses (baseline / unstructured comparison)
+# ---------------------------------------------------------------------------
 
 def group_lasso_channels(model: nn.Module) -> torch.Tensor:
     """Group lasso on output channels: L1 of L2 filter norms.
@@ -545,6 +649,9 @@ def group_lasso_channels(model: nn.Module) -> torch.Tensor:
     Encourages entire output filters to go to zero (channel pruning).
     For a Conv2d with weight (c_out, c_in, k_h, k_w), computes:
         sum over c_out of ||W[c, :, :, :]||_2
+
+    NOTE: This ignores skip-connection entanglement. Use coupled_group_lasso
+    for losses that respect residual structure.
     """
     loss = torch.tensor(0.0, device=next(model.parameters()).device)
     for m in model.modules():
@@ -590,18 +697,155 @@ def l1_kernel_sparsity(model: nn.Module) -> torch.Tensor:
             kernel_norms = w.norm(p=1, dim=1)
             loss = loss + kernel_norms.sum()
     return loss
+
+
+# ---------------------------------------------------------------------------
+# Coupled group lasso (skip-connection aware)
+# ---------------------------------------------------------------------------
+
+def _build_channel_groups(model: nn.Module) -> list[list[tuple[str, int]]]:
+    """Walk a CIFAR ResNet and build coupled channel groups.
+
+    In a ResNet BasicBlock with identity shortcut:
+        y = F(x) + x
+
+    Output channel c of the block is alive if EITHER:
+    - conv2 output channel c is non-zero, OR
+    - input channel c (from shortcut) is non-zero
+
+    So to prune channel c structurally, we need to zero:
+    - conv2 output filter c (kills the residual path for channel c)
+    - conv1 input channel c of the NEXT layer (stops consuming channel c)
+    - AND the channel must also be dead on the shortcut side
+
+    For identity shortcuts within a layer group (same spatial size),
+    channels flow unchanged through the shortcut. We group:
+    - conv2[block_i].weight[c, :, :, :] (output filter c of residual)
+    - conv1[block_{i+1}].weight[:, c, :, :] (input channel c of next block)
+    across ALL blocks in the same layer group into one coupled group.
+
+    At LambdaLayer boundaries (stride changes), the channel mapping changes
+    due to zero-padding. The padded channels are always zero on the shortcut
+    side, so they are NOT entangled — only the middle channels are coupled
+    to the previous layer group.
+
+    Returns:
+        List of channel groups. Each group is a list of (layer_name, channel_idx)
+        tuples identifying which output filter / input channel slices belong together.
+    """
+    groups = []
+    module_map = dict(model.named_modules())
+
+    for layer_group_name in ['layer1', 'layer2', 'layer3']:
+        layer_group = getattr(model, layer_group_name, None)
+        if layer_group is None:
+            continue
+
+        num_blocks = len(layer_group)
+        num_channels = layer_group[0].conv2.weight.shape[0]
+
+        for c in range(num_channels):
+            group = []
+
+            for block_idx in range(num_blocks):
+                prefix = f'{layer_group_name}.{block_idx}'
+
+                # conv2 output filter c (residual path produces channel c)
+                group.append((f'{prefix}.conv2', 'out', c))
+
+                # conv1 input channel c (residual path consumes channel c)
+                # Only for blocks after the first — block 0's input comes
+                # from the previous layer group or conv1
+                if block_idx > 0:
+                    group.append((f'{prefix}.conv1', 'in', c))
+
+            # Also include the NEXT block's conv1 input channel c
+            # (the output of this layer group feeds the next layer group's first block)
+            # This is handled implicitly — at stride boundaries the channel
+            # mapping changes, so we don't couple across layer groups.
+
+            groups.append(group)
+
+    return groups
+
+
+def coupled_group_lasso(model: nn.Module) -> Callable[[nn.Module], torch.Tensor]:
+    """Factory: skip-connection-aware group lasso for CIFAR ResNets.
+
+    Builds coupled channel groups at construction time by walking the model
+    architecture, then returns a loss function that penalizes the joint
+    L2 norm of each group.
+
+    For each channel group g, concatenates all weight slices belonging to
+    the group into one vector and takes its L2 norm:
+
+        L = sum_g ||w_g||_2
+
+    where w_g = concat(conv2.weight[c,:,:,:], conv1_next.weight[:,c,:,:], ...)
+
+    This ensures gradients drive ALL entangled weights toward zero together,
+    so structured pruning actually translates to speedup.
+
+    Args:
+        model: The ResNet model (used to build groups at factory time).
+
+    Returns:
+        Loss function fn(model) -> scalar tensor.
+    """
+    groups = _build_channel_groups(model)
+    module_map = {name: m for name, m in model.named_modules()}
+
+    # Also add independent penalty for layers not covered by groups:
+    # conv1 (stem) and linear (classifier)
+    uncoupled_layers = set()
+    for name, m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            uncoupled_layers.add(name)
+    for group in groups:
+        for layer_name, _, _ in group:
+            uncoupled_layers.discard(layer_name)
+
+    def fn(model: nn.Module) -> torch.Tensor:
+        device = next(model.parameters()).device
+        loss = torch.tensor(0.0, device=device)
+        module_map_live = {name: m for name, m in model.named_modules()}
+
+        # Coupled groups: joint L2 norm per channel group
+        for group in groups:
+            parts = []
+            for layer_name, direction, c in group:
+                m = module_map_live[layer_name]
+                if direction == 'out':
+                    # Output filter c: shape (c_in, k_h, k_w) → flatten
+                    parts.append(m.weight[c].flatten())
+                else:  # 'in'
+                    # Input channel c: shape (c_out, k_h, k_w) → flatten
+                    parts.append(m.weight[:, c].flatten())
+            group_vec = torch.cat(parts)
+            loss = loss + group_vec.norm(p=2)
+
+        # Uncoupled layers: standard per-channel group lasso
+        for layer_name in uncoupled_layers:
+            m = module_map_live[layer_name]
+            if isinstance(m, nn.Conv2d):
+                filter_norms = m.weight.flatten(1).norm(p=2, dim=1)
+                loss = loss + filter_norms.sum()
+
+        return loss
+
+    return fn
 ```
 
 **Step 4: Run tests to verify they pass**
 
 Run: `python -m pytest tests/test_sparsity.py -v`
-Expected: All 10 tests PASS
+Expected: All 15 tests PASS (10 independent + 5 coupled)
 
 **Step 5: Commit**
 
 ```bash
 git add experiments/sparsity.py tests/test_sparsity.py
-git commit -m "feat: add structured sparsity loss functions"
+git commit -m "feat: add structured sparsity losses with skip-connection-aware coupling"
 ```
 
 ---
@@ -1187,18 +1431,28 @@ git commit -m "feat: add training loop with W&B logging and compression tracking
 
 Define experiment configs here and run them.
 """
+from resnet import resnet20
 from experiments.config import ExperimentConfig
-from experiments.sparsity import group_lasso_channels, group_lasso_blocks, l1_kernel_sparsity
+from experiments.sparsity import (
+    group_lasso_channels,
+    group_lasso_blocks,
+    l1_kernel_sparsity,
+    coupled_group_lasso,
+)
 from experiments.schedules import linear_warmup, cosine_anneal, constant
 from experiments.trainer import run_experiment
 
 
 # --- Example experiment configs ---
 
+# Build model once to create coupled loss (needs architecture info)
+_model_for_groups = resnet20()
+
 baseline = ExperimentConfig(
     name="baseline-no-sparsity",
 )
 
+# Independent per-layer losses (ignore skip-connection entanglement)
 group_lasso_delay50 = ExperimentConfig(
     name="group-lasso-channels-delay50",
     sparsity_fn=group_lasso_channels,
@@ -1214,6 +1468,13 @@ block_lasso_cosine = ExperimentConfig(
 l1_kernel = ExperimentConfig(
     name="l1-kernel-delay50",
     sparsity_fn=l1_kernel_sparsity,
+    sparsity_schedule=linear_warmup(delay=50, ramp=50),
+)
+
+# Coupled loss (skip-connection aware — sparsity translates to structured savings)
+coupled_delay50 = ExperimentConfig(
+    name="coupled-group-lasso-delay50",
+    sparsity_fn=coupled_group_lasso(_model_for_groups),
     sparsity_schedule=linear_warmup(delay=50, ramp=50),
 )
 
@@ -1268,4 +1529,205 @@ Expected: `All imports OK`
 ```bash
 git add requirements.txt
 git commit -m "chore: add wandb dependency"
+```
+
+---
+
+### Task 9: Create LaTeX sparsity formulation document
+
+**Files:**
+- Create: `docs/sparsity-formulation.tex`
+
+**Step 1: Write the LaTeX document**
+
+Create `docs/sparsity-formulation.tex`:
+
+```latex
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{booktabs}
+
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\R}{\mathbb{R}}
+
+\title{Structured Sparsity Losses for ResNet Pruning:\\Independent vs.\ Coupled Formulations}
+\author{CoDeQ Experiment Framework}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Notation}
+
+Consider a convolutional layer $l$ with weight tensor
+$W_l \in \R^{c_{\text{out}} \times c_{\text{in}} \times k \times k}$.
+We write $W_l[c, :, :, :]$ for output filter $c$ and
+$W_l[:, c, :, :]$ for input channel $c$.
+
+\section{Independent Per-Layer Losses}
+
+These losses penalise each layer independently,
+ignoring skip-connection entanglement.
+
+\subsection{Channel-Level Group Lasso}
+
+\begin{equation}
+  \mathcal{L}_{\text{channel}} = \sum_{l} \sum_{c=1}^{c_{\text{out}}^{(l)}}
+    \norm{W_l[c, :, :, :]}_2
+\end{equation}
+
+This is the $\ell_{2,1}$ mixed norm: L2 within each output filter,
+L1 across filters. Drives entire output filters to zero.
+
+\subsection{Block-Level Group Lasso}
+
+\begin{equation}
+  \mathcal{L}_{\text{block}} = \sum_{l}
+    \sum_{j=0}^{\lceil c_{\text{out}}^{(l)} / B \rceil - 1}
+    \norm{W_l[jB : (j+1)B, :, :, :]}_2
+\end{equation}
+
+where $B$ is the block size. Groups consecutive output channels
+and penalises each block jointly.
+
+\subsection{Kernel-Level L1}
+
+\begin{equation}
+  \mathcal{L}_{\text{kernel}} = \sum_{l} \sum_{o=1}^{c_{\text{out}}^{(l)}}
+    \sum_{i=1}^{c_{\text{in}}^{(l)}} \norm{W_l[o, i, :, :]}_1
+\end{equation}
+
+Finest granularity---encourages individual $k \times k$ kernels to zero.
+
+\section{Skip-Connection Entanglement}
+
+\subsection{The Problem}
+
+In a ResNet BasicBlock with identity shortcut:
+\begin{equation}
+  y = F(x) + x, \qquad F(x) = \text{BN}(\text{conv2}(\text{ReLU}(\text{BN}(\text{conv1}(x)))))
+\end{equation}
+
+Channel $c$ of the output $y$ is:
+\begin{equation}
+  y_c = F(x)_c + x_c
+\end{equation}
+
+Channel $c$ is only zero (structurally prunable) if \textbf{both}:
+\begin{enumerate}
+  \item $F(x)_c = 0$ for all inputs --- i.e., output filter $c$ of conv2
+        has all-zero weights (given non-null inputs).
+  \item $x_c = 0$ for all inputs --- i.e., channel $c$ was already null
+        at the block input.
+\end{enumerate}
+
+This creates \textbf{entangled channel groups}: within a residual layer group
+(e.g.\ \texttt{layer1} with $N$ blocks sharing the same channel count),
+channel $c$ flows through every identity shortcut unchanged. Pruning it
+requires zeroing the corresponding weights in \emph{every} block.
+
+\subsection{LambdaLayer Shortcuts (Stride Boundaries)}
+
+At stride boundaries, the CIFAR ResNet uses option~A:
+\begin{equation}
+  \text{shortcut}(x) = \text{pad}\bigl(x[:, :, ::2, ::2],
+    \; (0,0,0,0, \lfloor c_{\text{out}}/4 \rfloor,
+    \lfloor c_{\text{out}}/4 \rfloor)\bigr)
+\end{equation}
+
+This maps $c_{\text{in}}$ input channels to $c_{\text{out}}$ channels:
+\begin{equation}
+  \text{shortcut}_c = \begin{cases}
+    0 & c < \text{pad} \quad \text{(zero-padded, always null)} \\
+    x_{c - \text{pad}} & \text{pad} \le c < \text{pad} + c_{\text{in}} \\
+    0 & c \ge \text{pad} + c_{\text{in}} \quad \text{(zero-padded, always null)}
+  \end{cases}
+\end{equation}
+
+The padded channels are always null on the shortcut side, so they are
+\textbf{not entangled}---the residual branch alone determines whether
+those channels survive. Only the middle $c_{\text{in}}$ channels
+are coupled to the previous layer group.
+
+\section{Coupled Group Lasso}
+
+\subsection{Channel Groups}
+
+For each residual layer group (e.g.\ \texttt{layer1}) with $N$ blocks
+and $C$ channels, define $C$ channel groups. Group $g_c$ contains:
+
+\begin{equation}
+  g_c = \bigcup_{n=1}^{N} \Bigl\{
+    \underbrace{W_{\text{conv2}}^{(n)}[c, :, :, :]}_{\text{output filter } c}
+  \Bigr\}
+  \;\cup\;
+  \bigcup_{n=2}^{N} \Bigl\{
+    \underbrace{W_{\text{conv1}}^{(n)}[:, c, :, :]}_{\text{input channel } c}
+  \Bigr\}
+\end{equation}
+
+The first block's conv1 input channels belong to the
+\emph{previous} layer group's coupling and are not included here.
+
+\subsection{Loss Function}
+
+Concatenate all weight slices in each group into a single vector
+$\mathbf{w}_g$ and take the L2 norm:
+
+\begin{equation}
+  \mathcal{L}_{\text{coupled}} =
+    \sum_{g \in \mathcal{G}} \norm{\mathbf{w}_g}_2
+    + \sum_{l \in \mathcal{U}}
+      \sum_{c=1}^{c_{\text{out}}^{(l)}} \norm{W_l[c, :, :, :]}_2
+\end{equation}
+
+where $\mathcal{G}$ is the set of coupled channel groups and
+$\mathcal{U}$ is the set of uncoupled layers (stem conv1, classifier).
+The second term applies standard channel group lasso to layers
+not involved in skip connections.
+
+\subsection{Why This Works}
+
+The joint L2 norm means the gradient for channel~$c$ is:
+\begin{equation}
+  \frac{\partial \mathcal{L}_{\text{coupled}}}
+       {\partial W_l[c, \cdot]}
+  = \frac{W_l[c, \cdot]}{\norm{\mathbf{w}_{g_c}}_2}
+\end{equation}
+
+All weights in group $g_c$ share the \textbf{same denominator}.
+When any weight in the group is large, the gradient on all other
+weights in the group is suppressed---the loss encourages the entire
+group to shrink together. This is exactly the group lasso property,
+but applied across skip-connection boundaries.
+
+\section{Summary}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llll}
+\toprule
+\textbf{Loss} & \textbf{Granularity} & \textbf{Skip-aware?} & \textbf{Use case} \\
+\midrule
+$\mathcal{L}_{\text{channel}}$ & Output filter & No & Baseline \\
+$\mathcal{L}_{\text{block}}$ & Block of $B$ filters & No & Coarser pruning \\
+$\mathcal{L}_{\text{kernel}}$ & Individual $k \times k$ & No & Fine-grained \\
+$\mathcal{L}_{\text{coupled}}$ & Entangled channel group & Yes & Structured pruning \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}
+```
+
+**Step 2: Compile to verify (optional)**
+
+Run: `cd docs && pdflatex sparsity-formulation.tex`
+
+**Step 3: Commit**
+
+```bash
+git add docs/sparsity-formulation.tex
+git commit -m "docs: add LaTeX formulation of structured sparsity losses"
 ```
