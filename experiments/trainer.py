@@ -8,9 +8,9 @@ import wandb
 import matplotlib.pyplot as plt
 from dataclasses import asdict
 
-from resnet import resnet20, resnet32, resnet44, resnet56, resnet110
+from src.resnet import resnet20, resnet32, resnet44, resnet56, resnet110
 from src.quantizer import DeadZoneLDZCompander
-from utils_quantization import attach_weight_quantizers, toggle_quantization
+from src.utils_quantization import attach_weight_quantizers, toggle_quantization
 from experiments.config import ExperimentConfig
 from experiments.evaluator import Evaluator
 
@@ -115,23 +115,30 @@ def run_experiment(config: ExperimentConfig):
     # --- Baseline evaluation (before quantization) ---
     evaluator = Evaluator(model, input_size=(3, 32, 32))
 
-    # --- Attach quantizers ---
-    attach_weight_quantizers(
-        model=model,
-        exclude_layers=config.exclude_layers,
-        quantizer=DeadZoneLDZCompander,
-        quantizer_kwargs=config.quantizer_kwargs,
-        enabled=True,
-    )
+    # --- Attach quantizers (skip for baseline) ---
+    if config.quantize:
+        attach_weight_quantizers(
+            model=model,
+            exclude_layers=config.exclude_layers,
+            quantizer=DeadZoneLDZCompander,
+            quantizer_kwargs=config.quantizer_kwargs,
+            enabled=True,
+        )
     model.to(device)
 
-    # --- Optimizer ---
-    base_params, dz_params, bit_params = _split_param_groups(model)
-    optimizer = optim.AdamW([
-        {'params': base_params, 'lr': config.lr, 'weight_decay': config.weight_decay},
-        {'params': dz_params, 'lr': config.lr_dz, 'weight_decay': config.weight_decay_dz},
-        {'params': bit_params, 'lr': config.lr_bit, 'weight_decay': config.weight_decay_bit},
-    ])
+    # --- Optimizer (SGD, matching original ResNet regime) ---
+    if config.quantize:
+        base_params, dz_params, bit_params = _split_param_groups(model)
+        param_groups = [
+            {'params': base_params, 'lr': config.lr, 'weight_decay': config.weight_decay},
+            {'params': dz_params, 'lr': config.lr_dz, 'weight_decay': config.weight_decay_dz},
+            {'params': bit_params, 'lr': config.lr_bit, 'weight_decay': config.weight_decay_bit},
+        ]
+    else:
+        param_groups = [
+            {'params': list(model.parameters()), 'lr': config.lr, 'weight_decay': config.weight_decay},
+        ]
+    optimizer = optim.SGD(param_groups, momentum=config.momentum)
 
     # --- LR scheduler (cosine on all param groups) ---
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=config.epochs)
@@ -144,7 +151,8 @@ def run_experiment(config: ExperimentConfig):
 
     for epoch in range(config.epochs):
         model.train()
-        toggle_quantization(model, enabled=True)
+        if config.quantize:
+            toggle_quantization(model, enabled=True)
 
         coeff = config.sparsity_schedule(epoch, config.epochs)
         running_ce = 0.0

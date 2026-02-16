@@ -24,10 +24,11 @@ class ExperimentConfig:
     batch_size: int = 512
     num_workers: int = 2
 
-    # --- Training ---
+    # --- Training (SGD, matching original ResNet regime + CoDeQ paper) ---
     epochs: int = 300
-    lr: float = 1e-3
-    weight_decay: float = 0.0
+    lr: float = 0.1
+    momentum: float = 0.9
+    weight_decay: float = 1e-4
     lr_scheduler: str = "cosine"
 
     # --- Quantizer (DeadZone params) ---
@@ -43,6 +44,9 @@ class ExperimentConfig:
     lr_bit: float = 1e-3
     weight_decay_dz: float = 0.01
     weight_decay_bit: float = 0.01
+
+    # --- Quantization ---
+    quantize: bool = True
 
     # --- Structured sparsity ---
     sparsity_fn: Callable[[nn.Module], 'torch.Tensor'] | None = None

@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from dataclasses import dataclass, field
-from resnet import LambdaLayer
+from src.resnet import LambdaLayer
 
 
 # ---------------------------------------------------------------------------

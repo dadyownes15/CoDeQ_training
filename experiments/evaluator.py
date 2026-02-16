@@ -2,12 +2,10 @@
 import torch
 import torch.nn as nn
 import numpy as np
-import matplotlib
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from dataclasses import dataclass
 
-from metrics import ModelStats, QuantizationComparison
+from src.metrics import ModelStats, QuantizationComparison
 
 
 @dataclass

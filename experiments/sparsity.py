@@ -19,7 +19,7 @@ import torch
 import torch.nn as nn
 from typing import Callable
 
-from resnet import BasicBlock, LambdaLayer
+from src.resnet import BasicBlock, LambdaLayer
 
 
 # ---------------------------------------------------------------------------
