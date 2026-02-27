@@ -17,6 +17,7 @@ from src.quantizer import DeadZoneLDZCompander
 from src.datasets import build_dataset_cifar
 from src.train import train, validate, save_checkpoint
 from src.structured_loss import LOSS_REGISTRY
+from src.bobs_calculator import compare_model
 from src.neural_networks import CifarMLP
 
 # ── Registries ──────────────────────────────────────────────
@@ -46,9 +47,29 @@ def build_run_name(cfg):
     if q:
         bit = q["kwargs"].get("fixed_bit_val", q["kwargs"].get("max_bits", "?"))
         qat_tag = f"_{q['name']}{bit}b"
+        # Deadzone variables
+        kw = q.get("kwargs", {})
+        if kw.get("learnable_deadzone", False):
+            dz_wd = cfg["optimizer"]["param_groups"].get("dz", {}).get("weight_decay", 0)
+            dz_lr = cfg["optimizer"]["param_groups"].get("dz", {}).get("lr", 0)
+            qat_tag += f"_dzwd{dz_wd}_dzlr{dz_lr}"
+        if kw.get("learnable_bit", False):
+            bit_wd = cfg["optimizer"]["param_groups"].get("bit", {}).get("weight_decay", 0)
+            bit_lr = cfg["optimizer"]["param_groups"].get("bit", {}).get("lr", 0)
+            qat_tag += f"_bitwd{bit_wd}_bitlr{bit_lr}"
     else:
         qat_tag = "_baseline"
-    return f"{cfg['model']}{qat_tag}_e{cfg['epochs']}_lr{cfg['optimizer']['param_groups']['base']['lr']}"
+
+    # Structured sparsity loss terms
+    struct_tag = ""
+    for term in cfg.get("loss_terms", []):
+        name = term["name"]
+        lam = term.get("lambda", 1.0)
+        struct_tag += f"_{name}{lam}"
+        for k, v in term.get("kwargs", {}).items():
+            struct_tag += f"_{k}{v}"
+
+    return f"{cfg['model']}{qat_tag}{struct_tag}_e{cfg['epochs']}_lr{cfg['optimizer']['param_groups']['base']['lr']}"
 
 
 def build_optimizer(model, cfg):
@@ -252,12 +273,25 @@ def main():
         logger.info("Epoch %d — loss=%.4f  train_acc=%.2f  val_acc=%.2f%s",
                      epoch + 1, loss, train_acc, prec1, "  [BEST]" if is_best else "")
 
-        wandb.log({
+        # ── BOBs evaluation ─────────────────────────────────
+        log_dict = {
             "epoch": epoch,
             "loss": loss,
             "train_acc": train_acc,
             "val_acc": prec1,
-        })
+        }
+        if cfg.get("eval_bobs", False):
+            bobs_result = compare_model(
+                model,
+                default_weight_bitrate=cfg.get("default_weight_bitrate", 8),
+                default_activation_bitrate=cfg.get("default_activation_bitrate", 8),
+            )
+            log_dict["bobs/total_compression_rate"] = bobs_result.total_bobs_compression_rate
+            for layer in bobs_result.layer_results:
+                log_dict[f"bobs/layer/{layer.name}"] = layer.BOBs_compression_rate
+            bobs_result.print()
+
+        wandb.log(log_dict)
 
         ckpt_path = os.path.join(save_dir, f"checkpoint_{run_name}.th")
         save_checkpoint({

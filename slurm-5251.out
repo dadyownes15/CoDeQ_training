@@ -1,0 +1,91 @@
+hendrixgpu03fl.unicph.domain
+Fri Feb 27 15:34:12 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 570.86.15              Driver Version: 570.86.15      CUDA Version: 12.8     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A40                     Off |   00000000:48:00.0 Off |                    0 |
+|  0%   22C    P8             28W /  300W |       1MiB /  46068MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Loaded miniconda shell environment for bash
+/home/xdg178/.conda/envs/codeq/bin/python
+torch 2.10.0+cu128 cuda 12.8 cudnn 91002
+=== Launching 8 MLP dead-zone sweep runs in parallel ===
+Starting: configs/mlp_deadzone_soft.yaml
+Starting: configs/mlp_deadzone_hard.yaml
+Starting: configs/mlp_deadzone_soft_structured_low.yaml
+Starting: configs/mlp_deadzone_hard_structured_low.yaml
+Starting: configs/mlp_deadzone_soft_structured_med.yaml
+Starting: configs/mlp_deadzone_hard_structured_med.yaml
+Starting: configs/mlp_deadzone_soft_structured_high.yaml
+Starting: configs/mlp_deadzone_hard_structured_high.yaml
+All 8 runs launched. PIDs: 2584040 2584041 2584042 2584043 2584044 2584045 2584046 2584047
+Traceback (most recent call last):
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+    from src.bobs_calculator import compare_model
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+    from fvcore.nn import FlopCountAnalysis
+ModuleNotFoundError: No module named 'fvcore'
+Traceback (most recent call last):
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+    from src.bobs_calculator import compare_model
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+    from fvcore.nn import FlopCountAnalysis
+ModuleNotFoundError: No module named 'fvcore'
+Traceback (most recent call last):
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+    from src.bobs_calculator import compare_model
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+    from fvcore.nn import FlopCountAnalysis
+ModuleNotFoundError: No module named 'fvcore'
+Traceback (most recent call last):
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+    from src.bobs_calculator import compare_model
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+    from fvcore.nn import FlopCountAnalysis
+ModuleNotFoundError: No module named 'fvcore'
+Traceback (most recent call last):
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+    from src.bobs_calculator import compare_model
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+    from fvcore.nn import FlopCountAnalysis
+ModuleNotFoundError: No module named 'fvcore'
+Traceback (most recent call last):
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+    from src.bobs_calculator import compare_model
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+    from fvcore.nn import FlopCountAnalysis
+ModuleNotFoundError: No module named 'fvcore'
+Traceback (most recent call last):
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+    from src.bobs_calculator import compare_model
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+    from fvcore.nn import FlopCountAnalysis
+ModuleNotFoundError: No module named 'fvcore'
+Traceback (most recent call last):
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+    from src.bobs_calculator import compare_model
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+    from fvcore.nn import FlopCountAnalysis
+ModuleNotFoundError: No module named 'fvcore'
+FAILED: PID 2584040
+FAILED: PID 2584041
+FAILED: PID 2584042
+FAILED: PID 2584043
+FAILED: PID 2584044
+FAILED: PID 2584045
+FAILED: PID 2584046
+FAILED: PID 2584047
+8 / 8 runs failed.

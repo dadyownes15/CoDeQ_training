@@ -26,4 +26,4 @@ which python
 python -c "import torch; print('torch', torch.__version__, 'cuda', torch.version.cuda, 'cudnn', torch.backends.cudnn.version())"
 
 echo "Starting training..."
-python run_training.py --config configs/deadzone_mlp.yaml --device cuda --verbose
+python run_training.py --config configs/baseline_mlp.yaml --device cuda

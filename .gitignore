@@ -7,3 +7,4 @@ wandb/
 slurm/logs/
 slurm/wandb_runs/
 .env
+docs/

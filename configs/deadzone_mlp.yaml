@@ -7,6 +7,9 @@ wandb_project: "CoDeQ experiments"
 workers: 4
 use_compile: 0
 save_dir: save_temp
+eval_bobs: true
+default_weight_bitrate: 8
+default_activation_bitrate: 8
 
 lr_scheduler: cosine
 
@@ -17,7 +20,7 @@ quantizer:
     max_bits: 8
     init_deadzone_logit: 3.0
     init_bit_logit: 3.0
-    learnable_bit: true
+    learnable_bit: false 
     learnable_deadzone: true
   exclude_layers: []
 
@@ -36,7 +39,7 @@ optimizer:
 
 loss_terms:
   - name: group_lasso
-    lambda: 1.0
+    lambda: 1
     kwargs:
-      lambda_linear: 0.1
+      lambda_linear: 0.001
       lambda_conv: 0.0

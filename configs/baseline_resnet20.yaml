@@ -7,6 +7,9 @@ wandb_project: "CoDeQ experiments"
 workers: 4
 use_compile: 0
 save_dir: save_temp
+eval_bobs: false
+default_weight_bitrate: 8
+default_activation_bitrate: 8
 
 lr_scheduler: cosine
 
