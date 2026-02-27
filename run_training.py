@@ -5,13 +5,10 @@ from dotenv import load_dotenv
 load_dotenv()
 import wandb
 
-import numpy as np
 import timm
 import torch
 import torch.nn as nn
 import torch.backends.cudnn as cudnn
-import torch.optim
-import torch.utils.data
 import src.resnet as resnet
 
 from src.utils_quantization import attach_weight_quantizers, toggle_quantization, UniformSymmetric
@@ -19,6 +16,21 @@ from src.quantizer import DeadZoneLDZCompander
 from src.datasets import build_dataset_cifar
 from src.train import train, validate, save_checkpoint
 from src.structured_loss import LOSS_REGISTRY
+
+class CifarMLP(nn.Module):
+    def __init__(self, num_classes=10):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(3 * 32 * 32, 120),
+            nn.ReLU(),
+            nn.Linear(120, 84),
+            nn.ReLU(),
+            nn.Linear(84, num_classes),
+        )
+
+    def forward(self, x):
+        return self.net(x.view(x.size(0), -1))
+
 
 # ── Registries ──────────────────────────────────────────────
 QUANTIZER_REGISTRY = {
@@ -138,6 +150,8 @@ def main():
     elif model_name == "vit":
         timm_name = "vit_tiny_patch16_224.augreg_in21k_ft_in1k"
         model = timm.create_model(timm_name, pretrained=False, num_classes=10)
+    elif model_name == "mlp":
+        model = CifarMLP()
     else:
         raise ValueError(f"Unknown model: {model_name}")
 
