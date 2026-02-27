@@ -1,0 +1,1471 @@
+hendrixgpu03fl.unicph.domain
+Fri Feb 27 14:11:31 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 570.86.15              Driver Version: 570.86.15      CUDA Version: 12.8     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A40                     Off |   00000000:0B:00.0 Off |                    0 |
+|  0%   23C    P8             27W /  300W |       1MiB /  46068MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+/home/xdg178/.conda/envs/codeq/bin/python
+torch 2.10.0+cu128 cuda 12.8 cudnn 91002
+Starting training...
+2026-02-27 14:11:47 [INFO] codeq: Loaded config from configs/deadzone_mlp.yaml
+2026-02-27 14:11:47 [DEBUG] codeq: Config contents: {'model': 'mlp', 'epochs': 100, 'batch_size': 128, 'img_size': 32, 'device': 'mps', 'wandb_project': 'CoDeQ experiments', 'workers': 4, 'use_compile': 0, 'save_dir': 'save_temp', 'lr_scheduler': 'cosine', 'quantizer': {'name': 'deadzone', 'kwargs': {'fixed_bit_val': 8, 'max_bits': 8, 'init_deadzone_logit': 3.0, 'init_bit_logit': 3.0, 'learnable_bit': True, 'learnable_deadzone': True}, 'exclude_layers': []}, 'optimizer': {'type': 'adamw', 'param_groups': {'base': {'lr': 0.001, 'weight_decay': 0.0}, 'dz': {'lr': 0.001, 'weight_decay': 2.5}, 'bit': {'lr': 0.001, 'weight_decay': 0.0}}}, 'loss_terms': [{'name': 'group_lasso', 'lambda': 1.0, 'kwargs': {'lambda_linear': 0.1, 'lambda_conv': 0.0}}]}
+2026-02-27 14:11:47 [INFO] codeq: Device overridden via CLI: cuda
+2026-02-27 14:11:47 [INFO] codeq: Using device: cuda
+2026-02-27 14:11:47 [DEBUG] codeq: Created save directory: save_temp
+2026-02-27 14:11:47 [DEBUG] codeq: CUDA optimizations enabled (cudnn.benchmark, tf32)
+2026-02-27 14:11:47 [INFO] codeq: Run name: mlp_deadzone8b_e100_lr0.001
+2026-02-27 14:11:47 [DEBUG] asyncio: Using selector: EpollSelector
+2026-02-27 14:11:47 [DEBUG] git.cmd: Popen(['git', 'version'], cwd=/home/xdg178/CoDeQ_training, stdin=None, shell=False, universal_newlines=False)
+2026-02-27 14:11:47 [DEBUG] git.cmd: Popen(['git', 'version'], cwd=/home/xdg178/CoDeQ_training, stdin=None, shell=False, universal_newlines=False)
+2026-02-27 14:11:47 [DEBUG] git.util: sys.platform='linux', git_executable='git'
+2026-02-27 14:11:47 [DEBUG] git.cmd: Popen(['git', 'rev-parse', '--show-toplevel'], cwd=/home/xdg178/CoDeQ_training, stdin=None, shell=False, universal_newlines=False)
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+2026-02-27 14:11:47 [DEBUG] urllib3.connectionpool: Starting new HTTPS connection (1): api.wandb.ai:443
+2026-02-27 14:11:47 [DEBUG] urllib3.connectionpool: https://api.wandb.ai:443 "POST /graphql HTTP/1.1" 200 None
+2026-02-27 14:11:47 [DEBUG] urllib3.connectionpool: https://api.wandb.ai:443 "POST /graphql HTTP/1.1" 200 None
+wandb: Currently logged in as: mikkeljanusdahl (mikkeljanusdahl-k-benhavns-universitet) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+2026-02-27 14:11:48 [DEBUG] git.util: sys.platform='linux', git_executable='git'
+2026-02-27 14:11:48 [DEBUG] git.cmd: Popen(['git', 'cat-file', '--batch-check'], cwd=/home/xdg178/CoDeQ_training, stdin=<valid stream>, shell=False, universal_newlines=False)
+wandb: setting up run jrrrrmxo
+wandb: Tracking run with wandb version 0.25.0
+wandb: Run data is saved locally in /home/xdg178/CoDeQ_training/wandb/run-20260227_141147-jrrrrmxo
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run mlp_deadzone8b_e100_lr0.001
+wandb: ⭐️ View project at https://wandb.ai/mikkeljanusdahl-k-benhavns-universitet/CoDeQ%20experiments
+wandb: 🚀 View run at https://wandb.ai/mikkeljanusdahl-k-benhavns-universitet/CoDeQ%20experiments/runs/jrrrrmxo
+2026-02-27 14:11:49 [INFO] codeq: wandb initialized (project=CoDeQ experiments)
+2026-02-27 14:11:49 [INFO] codeq: Building model: mlp
+2026-02-27 14:11:49 [DEBUG] codeq: Model parameter count: 379774
+2026-02-27 14:11:49 [INFO] codeq: Attaching quantizer: deadzone (kwargs={'fixed_bit_val': 8, 'max_bits': 8, 'init_deadzone_logit': 3.0, 'init_bit_logit': 3.0, 'learnable_bit': True, 'learnable_deadzone': True})
+Attached weight quantizer to layer: net.0
+Attached weight quantizer to layer: net.2
+Attached weight quantizer to layer: net.4
+2026-02-27 14:11:49 [DEBUG] codeq: Quantizer attached, excluded layers: []
+2026-02-27 14:11:49 [INFO] codeq: Loading CIFAR dataset (batch_size=128, workers=4)
+  0%|          | 0.00/170M [00:00<?, ?B/s]  0%|          | 65.5k/170M [00:00<05:19, 534kB/s]  0%|          | 131k/170M [00:00<05:09, 550kB/s]   0%|          | 229k/170M [00:00<04:05, 693kB/s]  0%|          | 459k/170M [00:00<02:21, 1.20MB/s]  1%|          | 918k/170M [00:00<01:16, 2.22MB/s]  1%|          | 1.38M/170M [00:00<00:59, 2.86MB/s]  1%|          | 1.87M/170M [00:00<00:50, 3.33MB/s]  1%|▏         | 2.39M/170M [00:00<00:45, 3.73MB/s]  2%|▏         | 2.95M/170M [00:01<00:40, 4.09MB/s]  2%|▏         | 3.54M/170M [00:01<00:37, 4.42MB/s]  2%|▏         | 4.13M/170M [00:01<00:35, 4.67MB/s]  3%|▎         | 4.78M/170M [00:01<00:33, 4.96MB/s]  3%|▎         | 5.44M/170M [00:01<00:31, 5.23MB/s]  4%|▎         | 6.13M/170M [00:01<00:29, 5.57MB/s]  4%|▍         | 6.85M/170M [00:01<00:28, 5.80MB/s]  4%|▍         | 7.63M/170M [00:01<00:26, 6.07MB/s]  5%|▍         | 8.45M/170M [00:01<00:25, 6.41MB/s]  5%|▌         | 9.27M/170M [00:02<00:23, 6.73MB/s]  6%|▌         | 10.2M/170M [00:02<00:22, 7.06MB/s]  7%|▋         | 11.1M/170M [00:02<00:21, 7.42MB/s]  7%|▋         | 12.1M/170M [00:02<00:20, 7.76MB/s]  8%|▊         | 13.1M/170M [00:02<00:19, 8.11MB/s]  8%|▊         | 14.2M/170M [00:02<00:18, 8.53MB/s]  9%|▉         | 15.4M/170M [00:02<00:17, 8.90MB/s] 10%|▉         | 16.5M/170M [00:02<00:16, 9.46MB/s] 10%|█         | 17.8M/170M [00:02<00:15, 9.97MB/s] 11%|█         | 19.1M/170M [00:03<00:14, 10.6MB/s] 12%|█▏        | 20.5M/170M [00:03<00:13, 11.0MB/s] 13%|█▎        | 21.9M/170M [00:03<00:12, 11.6MB/s] 14%|█▍        | 23.5M/170M [00:03<00:12, 12.0MB/s] 15%|█▍        | 25.1M/170M [00:03<00:11, 12.6MB/s] 16%|█▌        | 26.7M/170M [00:03<00:10, 13.3MB/s] 17%|█▋        | 28.5M/170M [00:03<00:10, 14.1MB/s] 18%|█▊        | 30.3M/170M [00:03<00:09, 14.7MB/s] 19%|█▉        | 32.2M/170M [00:03<00:08, 15.4MB/s] 20%|██        | 34.3M/170M [00:04<00:08, 16.2MB/s] 21%|██▏       | 36.4M/170M [00:04<00:07, 17.0MB/s] 23%|██▎       | 38.6M/170M [00:04<00:07, 17.8MB/s] 24%|██▍       | 41.0M/170M [00:04<00:06, 18.7MB/s] 26%|██▌       | 43.5M/170M [00:04<00:06, 19.5MB/s] 27%|██▋       | 46.1M/170M [00:04<00:06, 20.7MB/s] 29%|██▊       | 48.8M/170M [00:04<00:05, 21.7MB/s] 30%|███       | 51.5M/170M [00:04<00:05, 22.5MB/s] 32%|███▏      | 54.3M/170M [00:04<00:05, 23.1MB/s] 33%|███▎      | 57.1M/170M [00:05<00:04, 23.3MB/s] 35%|███▌      | 59.9M/170M [00:05<00:04, 24.0MB/s] 37%|███▋      | 62.7M/170M [00:05<00:04, 25.1MB/s] 38%|███▊      | 65.2M/170M [00:05<00:04, 24.8MB/s] 40%|███▉      | 67.9M/170M [00:05<00:04, 24.9MB/s] 41%|████▏     | 70.4M/170M [00:05<00:04, 24.9MB/s] 43%|████▎     | 72.9M/170M [00:05<00:03, 24.6MB/s] 44%|████▍     | 75.7M/170M [00:05<00:03, 25.2MB/s] 46%|████▌     | 78.2M/170M [00:05<00:03, 24.9MB/s] 47%|████▋     | 80.7M/170M [00:06<00:03, 24.3MB/s] 49%|████▉     | 83.3M/170M [00:06<00:03, 24.6MB/s] 50%|█████     | 85.8M/170M [00:06<00:03, 24.0MB/s] 52%|█████▏    | 88.2M/170M [00:06<00:03, 23.7MB/s] 53%|█████▎    | 90.6M/170M [00:06<00:03, 23.5MB/s] 55%|█████▍    | 93.4M/170M [00:06<00:03, 24.7MB/s] 56%|█████▌    | 95.8M/170M [00:06<00:03, 24.2MB/s] 58%|█████▊    | 98.3M/170M [00:06<00:03, 23.9MB/s] 59%|█████▉    | 101M/170M [00:06<00:03, 22.6MB/s]  61%|██████    | 104M/170M [00:07<00:02, 23.9MB/s] 62%|██████▏   | 106M/170M [00:07<00:02, 23.9MB/s] 64%|██████▎   | 108M/170M [00:07<00:02, 23.5MB/s] 65%|██████▌   | 111M/170M [00:07<00:02, 23.4MB/s] 67%|██████▋   | 114M/170M [00:07<00:02, 24.2MB/s] 68%|██████▊   | 116M/170M [00:07<00:02, 23.8MB/s] 70%|██████▉   | 119M/170M [00:07<00:02, 24.3MB/s] 71%|███████   | 121M/170M [00:07<00:02, 23.4MB/s] 72%|███████▏  | 124M/170M [00:07<00:02, 23.1MB/s] 74%|███████▍  | 126M/170M [00:07<00:01, 23.1MB/s] 75%|███████▌  | 129M/170M [00:08<00:01, 23.2MB/s] 77%|███████▋  | 131M/170M [00:08<00:01, 23.8MB/s] 79%|███████▉  | 135M/170M [00:08<00:01, 24.4MB/s] 81%|████████  | 138M/170M [00:08<00:01, 25.3MB/s] 83%|████████▎ | 141M/170M [00:08<00:01, 26.0MB/s] 84%|████████▍ | 144M/170M [00:08<00:01, 26.5MB/s] 86%|████████▌ | 147M/170M [00:08<00:00, 26.8MB/s] 88%|████████▊ | 150M/170M [00:08<00:00, 27.6MB/s] 90%|████████▉ | 153M/170M [00:08<00:00, 26.6MB/s] 91%|█████████ | 155M/170M [00:09<00:00, 25.2MB/s] 93%|█████████▎| 158M/170M [00:09<00:00, 25.7MB/s] 94%|█████████▍| 161M/170M [00:09<00:00, 25.8MB/s] 96%|█████████▌| 163M/170M [00:09<00:00, 25.0MB/s] 97%|█████████▋| 166M/170M [00:09<00:00, 24.1MB/s] 99%|█████████▉| 168M/170M [00:09<00:00, 23.2MB/s]100%|██████████| 170M/170M [00:09<00:00, 17.5MB/s]
+/home/xdg178/.conda/envs/codeq/lib/python3.11/site-packages/torchvision/datasets/cifar.py:83: VisibleDeprecationWarning: dtype(): align should be passed as Python or NumPy boolean but got `align=0`. Did you mean to pass a tuple to create a subarray type? (Deprecated NumPy 2.4)
+  entry = pickle.load(f, encoding="latin1")
+2026-02-27 14:12:10 [DEBUG] codeq: Train batches: 391, Val batches: 79
+2026-02-27 14:12:10 [INFO] codeq: Optimizer: adamw (3 param groups)
+2026-02-27 14:12:10 [INFO] codeq: LR scheduler: cosine (T_max=100)
+2026-02-27 14:12:10 [INFO] codeq: Extra loss terms: ['group_lasso']
+2026-02-27 14:12:10 [INFO] codeq: Starting training: epochs 0→100
+2026-02-27 14:12:10 [INFO] codeq: Epoch 1/100 — lr=1.00000e-03
+Epoch: [0][0/391]	Time 0.807 (0.807)	Data 0.149 (0.149)	Loss 44.7533 (44.7533)	Prec@1 13.281 (13.281)
+Epoch: [0][50/391]	Time 0.021 (0.034)	Data 0.000 (0.003)	Loss 5.2922 (14.0068)	Prec@1 10.938 (10.815)
+Epoch: [0][100/391]	Time 0.019 (0.027)	Data 0.000 (0.002)	Loss 2.5245 (8.7136)	Prec@1 8.594 (10.396)
+Epoch: [0][150/391]	Time 0.023 (0.024)	Data 0.000 (0.001)	Loss 2.4406 (6.6435)	Prec@1 8.594 (10.218)
+Epoch: [0][200/391]	Time 0.016 (0.023)	Data 0.000 (0.001)	Loss 2.4310 (5.5965)	Prec@1 7.812 (10.160)
+Epoch: [0][250/391]	Time 0.016 (0.022)	Data 0.000 (0.001)	Loss 2.4297 (4.9656)	Prec@1 8.594 (10.066)
+Epoch: [0][300/391]	Time 0.016 (0.021)	Data 0.000 (0.001)	Loss 2.4471 (4.5457)	Prec@1 8.594 (10.081)
+Epoch: [0][350/391]	Time 0.016 (0.020)	Data 0.000 (0.001)	Loss 2.4629 (4.2482)	Prec@1 12.500 (9.985)
+Test: [0/79]	Time 0.101 (0.101)	Loss 2.3023 (2.3023)	Prec@1 7.031 (7.031)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3032 (2.3026)	Prec@1 4.688 (9.972)
+ * Prec@1 10.000
+2026-02-27 14:12:18 [INFO] codeq: Epoch 1 — loss=4.0675  train_acc=9.96  val_acc=10.00  [BEST]
+2026-02-27 14:12:18 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:12:18 [INFO] codeq: Epoch 2/100 — lr=9.99753e-04
+Epoch: [1][0/391]	Time 0.163 (0.163)	Data 0.142 (0.142)	Loss 2.4723 (2.4723)	Prec@1 10.156 (10.156)
+Epoch: [1][50/391]	Time 0.017 (0.020)	Data 0.000 (0.004)	Loss 2.4700 (2.4721)	Prec@1 12.500 (10.340)
+Epoch: [1][100/391]	Time 0.018 (0.018)	Data 0.000 (0.002)	Loss 2.4696 (2.4719)	Prec@1 10.938 (10.002)
+Epoch: [1][150/391]	Time 0.021 (0.018)	Data 0.000 (0.001)	Loss 2.4682 (2.4711)	Prec@1 7.812 (10.213)
+Epoch: [1][200/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.4674 (2.4703)	Prec@1 10.938 (10.036)
+Epoch: [1][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.4681 (2.4695)	Prec@1 4.688 (9.904)
+Epoch: [1][300/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.4659 (2.4690)	Prec@1 7.812 (9.871)
+Epoch: [1][350/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.4660 (2.4686)	Prec@1 10.938 (9.845)
+Test: [0/79]	Time 0.120 (0.120)	Loss 2.3021 (2.3021)	Prec@1 14.844 (14.844)
+Test: [50/79]	Time 0.007 (0.010)	Loss 2.3025 (2.3026)	Prec@1 10.938 (9.942)
+ * Prec@1 10.000
+2026-02-27 14:12:26 [INFO] codeq: Epoch 2 — loss=2.4684  train_acc=9.82  val_acc=10.00
+2026-02-27 14:12:26 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:12:26 [INFO] codeq: Epoch 3/100 — lr=9.99013e-04
+Epoch: [2][0/391]	Time 0.201 (0.201)	Data 0.179 (0.179)	Loss 2.4656 (2.4656)	Prec@1 12.500 (12.500)
+Epoch: [2][50/391]	Time 0.017 (0.023)	Data 0.000 (0.005)	Loss 2.4659 (2.4661)	Prec@1 8.594 (9.528)
+Epoch: [2][100/391]	Time 0.021 (0.020)	Data 0.000 (0.003)	Loss 2.4688 (2.4663)	Prec@1 7.031 (9.491)
+Epoch: [2][150/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.4669 (2.4667)	Prec@1 10.156 (9.525)
+Epoch: [2][200/391]	Time 0.018 (0.019)	Data 0.000 (0.001)	Loss 2.4669 (2.4669)	Prec@1 13.281 (9.659)
+Epoch: [2][250/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.4660 (2.4668)	Prec@1 8.594 (9.720)
+Epoch: [2][300/391]	Time 0.021 (0.019)	Data 0.000 (0.001)	Loss 2.4645 (2.4665)	Prec@1 10.938 (9.702)
+Epoch: [2][350/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.4613 (2.4662)	Prec@1 14.844 (9.693)
+Test: [0/79]	Time 0.109 (0.109)	Loss 2.3024 (2.3024)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3023 (2.3026)	Prec@1 13.281 (10.386)
+ * Prec@1 10.000
+2026-02-27 14:12:34 [INFO] codeq: Epoch 3 — loss=2.4658  train_acc=9.71  val_acc=10.00
+2026-02-27 14:12:34 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:12:34 [INFO] codeq: Epoch 4/100 — lr=9.97781e-04
+Epoch: [3][0/391]	Time 0.193 (0.193)	Data 0.174 (0.174)	Loss 2.4608 (2.4608)	Prec@1 9.375 (9.375)
+Epoch: [3][50/391]	Time 0.017 (0.021)	Data 0.000 (0.004)	Loss 2.4603 (2.4607)	Prec@1 9.375 (9.222)
+Epoch: [3][100/391]	Time 0.019 (0.019)	Data 0.000 (0.002)	Loss 2.4607 (2.4607)	Prec@1 10.156 (9.398)
+Epoch: [3][150/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.4563 (2.4604)	Prec@1 12.500 (9.566)
+Epoch: [3][200/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.4549 (2.4590)	Prec@1 6.250 (9.643)
+Epoch: [3][250/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.4595 (2.4584)	Prec@1 10.938 (9.767)
+Epoch: [3][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.4637 (2.4591)	Prec@1 7.812 (9.707)
+Epoch: [3][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.4708 (2.4597)	Prec@1 12.500 (9.747)
+Test: [0/79]	Time 0.122 (0.122)	Loss 2.3030 (2.3030)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3028 (2.3026)	Prec@1 10.938 (9.804)
+ * Prec@1 10.000
+2026-02-27 14:12:42 [INFO] codeq: Epoch 4 — loss=2.4616  train_acc=9.74  val_acc=10.00
+2026-02-27 14:12:42 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:12:42 [INFO] codeq: Epoch 5/100 — lr=9.96057e-04
+Epoch: [4][0/391]	Time 0.173 (0.173)	Data 0.153 (0.153)	Loss 2.4873 (2.4873)	Prec@1 9.375 (9.375)
+Epoch: [4][50/391]	Time 0.017 (0.020)	Data 0.000 (0.004)	Loss 2.5111 (2.5041)	Prec@1 13.281 (10.156)
+Epoch: [4][100/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.5108 (2.5077)	Prec@1 10.938 (10.179)
+Epoch: [4][150/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.5010 (2.5071)	Prec@1 12.500 (10.177)
+Epoch: [4][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.4959 (2.5058)	Prec@1 7.812 (10.082)
+Epoch: [4][250/391]	Time 0.020 (0.017)	Data 0.000 (0.001)	Loss 2.4853 (2.5037)	Prec@1 10.156 (10.026)
+Epoch: [4][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.4779 (2.5016)	Prec@1 9.375 (10.026)
+Epoch: [4][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.5125 (2.4996)	Prec@1 10.156 (9.925)
+Test: [0/79]	Time 0.126 (0.126)	Loss 2.3029 (2.3029)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.005 (0.011)	Loss 2.3022 (2.3026)	Prec@1 13.281 (10.386)
+ * Prec@1 10.000
+2026-02-27 14:12:49 [INFO] codeq: Epoch 5 — loss=2.4977  train_acc=9.92  val_acc=10.00
+2026-02-27 14:12:49 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:12:49 [INFO] codeq: Epoch 6/100 — lr=9.93844e-04
+Epoch: [5][0/391]	Time 0.193 (0.193)	Data 0.174 (0.174)	Loss 2.5101 (2.5101)	Prec@1 16.406 (16.406)
+Epoch: [5][50/391]	Time 0.016 (0.020)	Data 0.000 (0.004)	Loss 2.4956 (2.4811)	Prec@1 11.719 (9.651)
+Epoch: [5][100/391]	Time 0.017 (0.018)	Data 0.000 (0.002)	Loss 2.4881 (2.4818)	Prec@1 8.594 (10.040)
+Epoch: [5][150/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.4693 (2.4804)	Prec@1 10.938 (9.991)
+Epoch: [5][200/391]	Time 0.018 (0.017)	Data 0.000 (0.001)	Loss 2.4546 (2.4759)	Prec@1 15.625 (10.012)
+Epoch: [5][250/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.4446 (2.4706)	Prec@1 7.031 (9.991)
+Epoch: [5][300/391]	Time 0.018 (0.017)	Data 0.000 (0.001)	Loss 2.4367 (2.4656)	Prec@1 14.062 (10.024)
+Epoch: [5][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.4310 (2.4612)	Prec@1 10.938 (9.994)
+Test: [0/79]	Time 0.088 (0.088)	Loss 2.3023 (2.3023)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.006 (0.007)	Loss 2.3030 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:12:56 [INFO] codeq: Epoch 6 — loss=2.4582  train_acc=9.97  val_acc=10.00
+2026-02-27 14:12:57 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:12:57 [INFO] codeq: Epoch 7/100 — lr=9.91144e-04
+Epoch: [6][0/391]	Time 0.208 (0.208)	Data 0.188 (0.188)	Loss 2.4291 (2.4291)	Prec@1 12.500 (12.500)
+Epoch: [6][50/391]	Time 0.016 (0.022)	Data 0.000 (0.005)	Loss 2.4251 (2.4277)	Prec@1 10.938 (10.371)
+Epoch: [6][100/391]	Time 0.016 (0.019)	Data 0.000 (0.003)	Loss 2.4251 (2.4270)	Prec@1 9.375 (10.110)
+Epoch: [6][150/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.4213 (2.4260)	Prec@1 10.938 (10.141)
+Epoch: [6][200/391]	Time 0.019 (0.018)	Data 0.000 (0.001)	Loss 2.4201 (2.4253)	Prec@1 9.375 (10.051)
+Epoch: [6][250/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.4197 (2.4246)	Prec@1 7.031 (9.870)
+Epoch: [6][300/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.4176 (2.4240)	Prec@1 8.594 (9.847)
+Epoch: [6][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.4215 (2.4236)	Prec@1 6.250 (9.798)
+Test: [0/79]	Time 0.118 (0.118)	Loss 2.3022 (2.3022)	Prec@1 10.156 (10.156)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3023 (2.3026)	Prec@1 10.156 (10.202)
+ * Prec@1 10.000
+2026-02-27 14:13:04 [INFO] codeq: Epoch 7 — loss=2.4229  train_acc=9.71  val_acc=10.00
+2026-02-27 14:13:04 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:13:04 [INFO] codeq: Epoch 8/100 — lr=9.87958e-04
+Epoch: [7][0/391]	Time 0.172 (0.172)	Data 0.148 (0.148)	Loss 2.4156 (2.4156)	Prec@1 9.375 (9.375)
+Epoch: [7][50/391]	Time 0.016 (0.021)	Data 0.000 (0.003)	Loss 2.4121 (2.4145)	Prec@1 5.469 (10.754)
+Epoch: [7][100/391]	Time 0.017 (0.020)	Data 0.000 (0.002)	Loss 2.4188 (2.4147)	Prec@1 7.031 (10.203)
+Epoch: [7][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.4113 (2.4138)	Prec@1 13.281 (10.203)
+Epoch: [7][200/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.4109 (2.4135)	Prec@1 7.812 (10.176)
+Epoch: [7][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.4085 (2.4132)	Prec@1 17.188 (10.094)
+Epoch: [7][300/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.4090 (2.4127)	Prec@1 8.594 (9.972)
+Epoch: [7][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.4075 (2.4120)	Prec@1 13.281 (9.943)
+Test: [0/79]	Time 0.087 (0.087)	Loss 2.3021 (2.3021)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3024 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:13:12 [INFO] codeq: Epoch 8 — loss=2.4117  train_acc=9.92  val_acc=10.00
+2026-02-27 14:13:12 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:13:12 [INFO] codeq: Epoch 9/100 — lr=9.84292e-04
+Epoch: [8][0/391]	Time 0.207 (0.207)	Data 0.183 (0.183)	Loss 2.4080 (2.4080)	Prec@1 12.500 (12.500)
+Epoch: [8][50/391]	Time 0.016 (0.021)	Data 0.000 (0.004)	Loss 2.4176 (2.4088)	Prec@1 11.719 (10.340)
+Epoch: [8][100/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.4046 (2.4103)	Prec@1 7.812 (10.241)
+Epoch: [8][150/391]	Time 0.015 (0.018)	Data 0.000 (0.002)	Loss 2.4056 (2.4083)	Prec@1 10.156 (10.084)
+Epoch: [8][200/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.4021 (2.4073)	Prec@1 6.250 (9.865)
+Epoch: [8][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3989 (2.4061)	Prec@1 12.500 (9.764)
+Epoch: [8][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3975 (2.4054)	Prec@1 7.812 (9.702)
+Epoch: [8][350/391]	Time 0.019 (0.017)	Data 0.000 (0.001)	Loss 2.4076 (2.4045)	Prec@1 8.594 (9.785)
+Test: [0/79]	Time 0.134 (0.134)	Loss 2.3021 (2.3021)	Prec@1 13.281 (13.281)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3021 (2.3026)	Prec@1 15.625 (9.773)
+ * Prec@1 10.000
+2026-02-27 14:13:19 [INFO] codeq: Epoch 9 — loss=2.4044  train_acc=9.72  val_acc=10.00
+2026-02-27 14:13:19 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:13:19 [INFO] codeq: Epoch 10/100 — lr=9.80147e-04
+Epoch: [9][0/391]	Time 0.187 (0.187)	Data 0.168 (0.168)	Loss 2.4006 (2.4006)	Prec@1 8.594 (8.594)
+Epoch: [9][50/391]	Time 0.017 (0.023)	Data 0.000 (0.004)	Loss 2.3996 (2.4001)	Prec@1 7.031 (9.804)
+Epoch: [9][100/391]	Time 0.016 (0.020)	Data 0.000 (0.002)	Loss 2.3929 (2.3978)	Prec@1 10.156 (9.715)
+Epoch: [9][150/391]	Time 0.016 (0.019)	Data 0.000 (0.001)	Loss 2.3911 (2.3969)	Prec@1 10.938 (9.494)
+Epoch: [9][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3927 (2.3966)	Prec@1 9.375 (9.414)
+Epoch: [9][250/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3996 (2.3969)	Prec@1 4.688 (9.537)
+Epoch: [9][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3884 (2.3963)	Prec@1 6.250 (9.476)
+Epoch: [9][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3869 (2.3952)	Prec@1 6.250 (9.486)
+Test: [0/79]	Time 0.100 (0.100)	Loss 2.3027 (2.3027)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3021 (2.3026)	Prec@1 13.281 (10.386)
+ * Prec@1 10.000
+2026-02-27 14:13:27 [INFO] codeq: Epoch 10 — loss=2.3946  train_acc=9.49  val_acc=10.00
+2026-02-27 14:13:27 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:13:27 [INFO] codeq: Epoch 11/100 — lr=9.75528e-04
+Epoch: [10][0/391]	Time 0.184 (0.184)	Data 0.163 (0.163)	Loss 2.3866 (2.3866)	Prec@1 3.125 (3.125)
+Epoch: [10][50/391]	Time 0.020 (0.022)	Data 0.000 (0.003)	Loss 2.3870 (2.3889)	Prec@1 7.812 (9.390)
+Epoch: [10][100/391]	Time 0.021 (0.020)	Data 0.000 (0.002)	Loss 2.3904 (2.3881)	Prec@1 17.969 (9.816)
+Epoch: [10][150/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.3889 (2.3884)	Prec@1 8.594 (9.810)
+Epoch: [10][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3836 (2.3885)	Prec@1 10.938 (9.740)
+Epoch: [10][250/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.3827 (2.3882)	Prec@1 10.938 (9.643)
+Epoch: [10][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3840 (2.3874)	Prec@1 12.500 (9.624)
+Epoch: [10][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3824 (2.3869)	Prec@1 11.719 (9.655)
+Test: [0/79]	Time 0.146 (0.146)	Loss 2.3027 (2.3027)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.005 (0.009)	Loss 2.3028 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:13:34 [INFO] codeq: Epoch 11 — loss=2.3863  train_acc=9.66  val_acc=10.00
+2026-02-27 14:13:34 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:13:34 [INFO] codeq: Epoch 12/100 — lr=9.70440e-04
+Epoch: [11][0/391]	Time 0.172 (0.172)	Data 0.153 (0.153)	Loss 2.3851 (2.3851)	Prec@1 7.031 (7.031)
+Epoch: [11][50/391]	Time 0.018 (0.020)	Data 0.000 (0.003)	Loss 2.3832 (2.3823)	Prec@1 8.594 (9.896)
+Epoch: [11][100/391]	Time 0.017 (0.018)	Data 0.000 (0.002)	Loss 2.3892 (2.3812)	Prec@1 11.719 (10.071)
+Epoch: [11][150/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3809 (2.3822)	Prec@1 9.375 (9.841)
+Epoch: [11][200/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3838 (2.3817)	Prec@1 10.156 (9.826)
+Epoch: [11][250/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3759 (2.3811)	Prec@1 9.375 (9.792)
+Epoch: [11][300/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3776 (2.3806)	Prec@1 7.812 (9.840)
+Epoch: [11][350/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3868 (2.3802)	Prec@1 10.156 (9.742)
+Test: [0/79]	Time 0.095 (0.095)	Loss 2.3029 (2.3029)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3021 (2.3026)	Prec@1 10.938 (9.804)
+ * Prec@1 10.000
+2026-02-27 14:13:41 [INFO] codeq: Epoch 12 — loss=2.3805  train_acc=9.66  val_acc=10.00
+2026-02-27 14:13:41 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:13:41 [INFO] codeq: Epoch 13/100 — lr=9.64888e-04
+Epoch: [12][0/391]	Time 0.166 (0.166)	Data 0.146 (0.146)	Loss 2.3784 (2.3784)	Prec@1 7.812 (7.812)
+Epoch: [12][50/391]	Time 0.018 (0.020)	Data 0.000 (0.003)	Loss 2.3776 (2.3762)	Prec@1 5.469 (9.712)
+Epoch: [12][100/391]	Time 0.017 (0.018)	Data 0.000 (0.002)	Loss 2.3742 (2.3752)	Prec@1 12.500 (9.592)
+Epoch: [12][150/391]	Time 0.022 (0.018)	Data 0.000 (0.001)	Loss 2.3802 (2.3766)	Prec@1 10.156 (9.887)
+Epoch: [12][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3761 (2.3767)	Prec@1 10.938 (9.892)
+Epoch: [12][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3716 (2.3761)	Prec@1 9.375 (9.929)
+Epoch: [12][300/391]	Time 0.019 (0.018)	Data 0.000 (0.001)	Loss 2.3742 (2.3757)	Prec@1 13.281 (9.881)
+Epoch: [12][350/391]	Time 0.018 (0.018)	Data 0.001 (0.001)	Loss 2.3775 (2.3755)	Prec@1 9.375 (9.827)
+Test: [0/79]	Time 0.106 (0.106)	Loss 2.3024 (2.3024)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3029 (2.3027)	Prec@1 10.938 (9.804)
+ * Prec@1 10.000
+2026-02-27 14:13:49 [INFO] codeq: Epoch 13 — loss=2.3753  train_acc=9.77  val_acc=10.00
+2026-02-27 14:13:49 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:13:49 [INFO] codeq: Epoch 14/100 — lr=9.58877e-04
+Epoch: [13][0/391]	Time 0.187 (0.187)	Data 0.162 (0.162)	Loss 2.3706 (2.3706)	Prec@1 12.500 (12.500)
+Epoch: [13][50/391]	Time 0.017 (0.021)	Data 0.000 (0.003)	Loss 2.3719 (2.3733)	Prec@1 7.812 (9.436)
+Epoch: [13][100/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3744 (2.3718)	Prec@1 7.031 (9.653)
+Epoch: [13][150/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3678 (2.3713)	Prec@1 10.938 (9.489)
+Epoch: [13][200/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3686 (2.3712)	Prec@1 9.375 (9.581)
+Epoch: [13][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3672 (2.3702)	Prec@1 8.594 (9.602)
+Epoch: [13][300/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3685 (2.3696)	Prec@1 10.156 (9.666)
+Epoch: [13][350/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3682 (2.3691)	Prec@1 10.156 (9.633)
+Test: [0/79]	Time 0.120 (0.120)	Loss 2.3024 (2.3024)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3027 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:13:57 [INFO] codeq: Epoch 14 — loss=2.3688  train_acc=9.63  val_acc=10.00
+2026-02-27 14:13:57 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:13:57 [INFO] codeq: Epoch 15/100 — lr=9.52414e-04
+Epoch: [14][0/391]	Time 0.175 (0.175)	Data 0.156 (0.156)	Loss 2.3636 (2.3636)	Prec@1 5.469 (5.469)
+Epoch: [14][50/391]	Time 0.016 (0.020)	Data 0.000 (0.003)	Loss 2.3636 (2.3631)	Prec@1 9.375 (9.635)
+Epoch: [14][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3634 (2.3637)	Prec@1 7.031 (9.692)
+Epoch: [14][150/391]	Time 0.019 (0.018)	Data 0.000 (0.001)	Loss 2.3674 (2.3660)	Prec@1 8.594 (9.960)
+Epoch: [14][200/391]	Time 0.019 (0.018)	Data 0.000 (0.001)	Loss 2.3646 (2.3658)	Prec@1 7.031 (9.942)
+Epoch: [14][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3711 (2.3654)	Prec@1 12.500 (9.879)
+Epoch: [14][300/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3620 (2.3656)	Prec@1 7.812 (9.892)
+Epoch: [14][350/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3623 (2.3650)	Prec@1 10.156 (9.854)
+Test: [0/79]	Time 0.106 (0.106)	Loss 2.3025 (2.3025)	Prec@1 10.156 (10.156)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3027 (2.3026)	Prec@1 10.156 (10.202)
+ * Prec@1 10.000
+2026-02-27 14:14:04 [INFO] codeq: Epoch 15 — loss=2.3646  train_acc=9.75  val_acc=10.00
+2026-02-27 14:14:04 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:14:04 [INFO] codeq: Epoch 16/100 — lr=9.45503e-04
+Epoch: [15][0/391]	Time 0.175 (0.175)	Data 0.155 (0.155)	Loss 2.3672 (2.3672)	Prec@1 10.156 (10.156)
+Epoch: [15][50/391]	Time 0.020 (0.022)	Data 0.000 (0.003)	Loss 2.3626 (2.3662)	Prec@1 10.156 (10.248)
+Epoch: [15][100/391]	Time 0.016 (0.020)	Data 0.000 (0.002)	Loss 2.3594 (2.3635)	Prec@1 10.938 (10.164)
+Epoch: [15][150/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.3604 (2.3626)	Prec@1 17.188 (9.965)
+Epoch: [15][200/391]	Time 0.020 (0.019)	Data 0.000 (0.001)	Loss 2.3663 (2.3626)	Prec@1 13.281 (10.012)
+Epoch: [15][250/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3607 (2.3626)	Prec@1 7.812 (10.035)
+Epoch: [15][300/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3579 (2.3619)	Prec@1 10.938 (10.039)
+Epoch: [15][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3566 (2.3613)	Prec@1 15.625 (9.925)
+Test: [0/79]	Time 0.106 (0.106)	Loss 2.3024 (2.3024)	Prec@1 14.844 (14.844)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3025 (2.3026)	Prec@1 10.938 (9.942)
+ * Prec@1 10.000
+2026-02-27 14:14:12 [INFO] codeq: Epoch 16 — loss=2.3609  train_acc=9.91  val_acc=10.00
+2026-02-27 14:14:12 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:14:12 [INFO] codeq: Epoch 17/100 — lr=9.38153e-04
+Epoch: [16][0/391]	Time 0.195 (0.195)	Data 0.172 (0.172)	Loss 2.3567 (2.3567)	Prec@1 9.375 (9.375)
+Epoch: [16][50/391]	Time 0.016 (0.021)	Data 0.000 (0.004)	Loss 2.3576 (2.3575)	Prec@1 10.938 (10.049)
+Epoch: [16][100/391]	Time 0.015 (0.019)	Data 0.000 (0.002)	Loss 2.3663 (2.3595)	Prec@1 10.938 (9.746)
+Epoch: [16][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3597 (2.3606)	Prec@1 10.156 (9.748)
+Epoch: [16][200/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3596 (2.3599)	Prec@1 10.156 (9.717)
+Epoch: [16][250/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3564 (2.3595)	Prec@1 7.031 (9.752)
+Epoch: [16][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3535 (2.3588)	Prec@1 15.625 (9.793)
+Epoch: [16][350/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.3550 (2.3584)	Prec@1 10.156 (9.742)
+Test: [0/79]	Time 0.125 (0.125)	Loss 2.3025 (2.3025)	Prec@1 14.844 (14.844)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3029 (2.3026)	Prec@1 10.938 (9.942)
+ * Prec@1 10.000
+2026-02-27 14:14:19 [INFO] codeq: Epoch 17 — loss=2.3584  train_acc=9.74  val_acc=10.00
+2026-02-27 14:14:20 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:14:20 [INFO] codeq: Epoch 18/100 — lr=9.30371e-04
+Epoch: [17][0/391]	Time 0.193 (0.193)	Data 0.169 (0.169)	Loss 2.3692 (2.3692)	Prec@1 9.375 (9.375)
+Epoch: [17][50/391]	Time 0.018 (0.022)	Data 0.000 (0.005)	Loss 2.3648 (2.3673)	Prec@1 9.375 (9.835)
+Epoch: [17][100/391]	Time 0.017 (0.020)	Data 0.000 (0.003)	Loss 2.3580 (2.3636)	Prec@1 5.469 (9.669)
+Epoch: [17][150/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3519 (2.3606)	Prec@1 12.500 (9.629)
+Epoch: [17][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3508 (2.3587)	Prec@1 7.812 (9.534)
+Epoch: [17][250/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3574 (2.3588)	Prec@1 8.594 (9.671)
+Epoch: [17][300/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3533 (2.3583)	Prec@1 13.281 (9.666)
+Epoch: [17][350/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3498 (2.3573)	Prec@1 8.594 (9.642)
+Test: [0/79]	Time 0.122 (0.122)	Loss 2.3024 (2.3024)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3024 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:14:27 [INFO] codeq: Epoch 18 — loss=2.3568  train_acc=9.59  val_acc=10.00
+2026-02-27 14:14:27 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:14:27 [INFO] codeq: Epoch 19/100 — lr=9.22164e-04
+Epoch: [18][0/391]	Time 0.190 (0.190)	Data 0.172 (0.172)	Loss 2.3585 (2.3585)	Prec@1 7.812 (7.812)
+Epoch: [18][50/391]	Time 0.016 (0.020)	Data 0.000 (0.004)	Loss 2.3535 (2.3552)	Prec@1 7.812 (10.309)
+Epoch: [18][100/391]	Time 0.017 (0.018)	Data 0.000 (0.002)	Loss 2.3615 (2.3552)	Prec@1 7.812 (10.087)
+Epoch: [18][150/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3544 (2.3559)	Prec@1 12.500 (10.006)
+Epoch: [18][200/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3505 (2.3550)	Prec@1 7.812 (9.939)
+Epoch: [18][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3469 (2.3537)	Prec@1 10.156 (10.010)
+Epoch: [18][300/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3635 (2.3555)	Prec@1 11.719 (9.936)
+Epoch: [18][350/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3558 (2.3560)	Prec@1 5.469 (9.829)
+Test: [0/79]	Time 0.101 (0.101)	Loss 2.3026 (2.3026)	Prec@1 7.031 (7.031)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3028 (2.3026)	Prec@1 4.688 (9.972)
+ * Prec@1 10.000
+2026-02-27 14:14:34 [INFO] codeq: Epoch 19 — loss=2.3559  train_acc=9.79  val_acc=10.00
+2026-02-27 14:14:34 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:14:34 [INFO] codeq: Epoch 20/100 — lr=9.13540e-04
+Epoch: [19][0/391]	Time 0.199 (0.199)	Data 0.176 (0.176)	Loss 2.3516 (2.3516)	Prec@1 12.500 (12.500)
+Epoch: [19][50/391]	Time 0.016 (0.020)	Data 0.000 (0.004)	Loss 2.3478 (2.3502)	Prec@1 9.375 (9.865)
+Epoch: [19][100/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3472 (2.3486)	Prec@1 13.281 (9.955)
+Epoch: [19][150/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.3634 (2.3488)	Prec@1 13.281 (9.784)
+Epoch: [19][200/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.3551 (2.3512)	Prec@1 8.594 (9.678)
+Epoch: [19][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3496 (2.3515)	Prec@1 12.500 (9.668)
+Epoch: [19][300/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.3459 (2.3509)	Prec@1 11.719 (9.731)
+Epoch: [19][350/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3480 (2.3501)	Prec@1 10.938 (9.740)
+Test: [0/79]	Time 0.139 (0.139)	Loss 2.3030 (2.3030)	Prec@1 7.031 (7.031)
+Test: [50/79]	Time 0.005 (0.009)	Loss 2.3027 (2.3026)	Prec@1 4.688 (9.972)
+ * Prec@1 10.000
+2026-02-27 14:14:42 [INFO] codeq: Epoch 20 — loss=2.3498  train_acc=9.72  val_acc=10.00
+2026-02-27 14:14:42 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:14:42 [INFO] codeq: Epoch 21/100 — lr=9.04508e-04
+Epoch: [20][0/391]	Time 0.207 (0.207)	Data 0.182 (0.182)	Loss 2.3450 (2.3450)	Prec@1 11.719 (11.719)
+Epoch: [20][50/391]	Time 0.015 (0.020)	Data 0.000 (0.004)	Loss 2.3449 (2.3445)	Prec@1 10.156 (10.248)
+Epoch: [20][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3438 (2.3448)	Prec@1 8.594 (10.280)
+Epoch: [20][150/391]	Time 0.019 (0.018)	Data 0.000 (0.001)	Loss 2.3502 (2.3455)	Prec@1 12.500 (10.187)
+Epoch: [20][200/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3474 (2.3462)	Prec@1 7.031 (10.234)
+Epoch: [20][250/391]	Time 0.019 (0.017)	Data 0.000 (0.001)	Loss 2.3510 (2.3464)	Prec@1 12.500 (10.278)
+Epoch: [20][300/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3462 (2.3468)	Prec@1 8.594 (10.146)
+Epoch: [20][350/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3491 (2.3468)	Prec@1 10.938 (10.034)
+Test: [0/79]	Time 0.100 (0.100)	Loss 2.3026 (2.3026)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3023 (2.3025)	Prec@1 13.281 (10.386)
+ * Prec@1 10.000
+2026-02-27 14:14:49 [INFO] codeq: Epoch 21 — loss=2.3467  train_acc=9.99  val_acc=10.00
+2026-02-27 14:14:49 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:14:49 [INFO] codeq: Epoch 22/100 — lr=8.95078e-04
+Epoch: [21][0/391]	Time 0.191 (0.191)	Data 0.164 (0.164)	Loss 2.3439 (2.3439)	Prec@1 6.250 (6.250)
+Epoch: [21][50/391]	Time 0.016 (0.020)	Data 0.000 (0.003)	Loss 2.3448 (2.3449)	Prec@1 14.062 (10.738)
+Epoch: [21][100/391]	Time 0.017 (0.018)	Data 0.000 (0.002)	Loss 2.3459 (2.3446)	Prec@1 11.719 (10.682)
+Epoch: [21][150/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.3460 (2.3447)	Prec@1 10.938 (10.456)
+Epoch: [21][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3473 (2.3450)	Prec@1 8.594 (10.358)
+Epoch: [21][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3449 (2.3451)	Prec@1 7.031 (10.141)
+Epoch: [21][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3533 (2.3466)	Prec@1 11.719 (10.050)
+Epoch: [21][350/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3489 (2.3472)	Prec@1 6.250 (10.061)
+Test: [0/79]	Time 0.109 (0.109)	Loss 2.3027 (2.3027)	Prec@1 13.281 (13.281)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3023 (2.3026)	Prec@1 15.625 (9.773)
+ * Prec@1 10.000
+2026-02-27 14:14:56 [INFO] codeq: Epoch 22 — loss=2.3471  train_acc=9.99  val_acc=10.00
+2026-02-27 14:14:57 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:14:57 [INFO] codeq: Epoch 23/100 — lr=8.85257e-04
+Epoch: [22][0/391]	Time 0.166 (0.166)	Data 0.147 (0.147)	Loss 2.3446 (2.3446)	Prec@1 8.594 (8.594)
+Epoch: [22][50/391]	Time 0.015 (0.020)	Data 0.000 (0.003)	Loss 2.3412 (2.3435)	Prec@1 12.500 (9.926)
+Epoch: [22][100/391]	Time 0.018 (0.019)	Data 0.000 (0.002)	Loss 2.3549 (2.3465)	Prec@1 9.375 (9.947)
+Epoch: [22][150/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3473 (2.3480)	Prec@1 10.938 (9.934)
+Epoch: [22][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3426 (2.3476)	Prec@1 8.594 (9.942)
+Epoch: [22][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3418 (2.3467)	Prec@1 14.844 (9.917)
+Epoch: [22][300/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3417 (2.3458)	Prec@1 10.938 (9.860)
+Epoch: [22][350/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3403 (2.3450)	Prec@1 7.812 (9.911)
+Test: [0/79]	Time 0.115 (0.115)	Loss 2.3023 (2.3023)	Prec@1 13.281 (13.281)
+Test: [50/79]	Time 0.007 (0.009)	Loss 2.3017 (2.3026)	Prec@1 15.625 (9.773)
+ * Prec@1 10.000
+2026-02-27 14:15:04 [INFO] codeq: Epoch 23 — loss=2.3446  train_acc=9.90  val_acc=10.00
+2026-02-27 14:15:05 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:15:05 [INFO] codeq: Epoch 24/100 — lr=8.75056e-04
+Epoch: [23][0/391]	Time 0.173 (0.173)	Data 0.153 (0.153)	Loss 2.3422 (2.3422)	Prec@1 9.375 (9.375)
+Epoch: [23][50/391]	Time 0.020 (0.020)	Data 0.000 (0.003)	Loss 2.3567 (2.3495)	Prec@1 9.375 (10.172)
+Epoch: [23][100/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3506 (2.3509)	Prec@1 9.375 (10.079)
+Epoch: [23][150/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.3462 (2.3499)	Prec@1 7.812 (10.011)
+Epoch: [23][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3446 (2.3483)	Prec@1 8.594 (10.067)
+Epoch: [23][250/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.3402 (2.3469)	Prec@1 10.938 (10.022)
+Epoch: [23][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3387 (2.3456)	Prec@1 11.719 (9.972)
+Epoch: [23][350/391]	Time 0.019 (0.018)	Data 0.000 (0.001)	Loss 2.3494 (2.3462)	Prec@1 11.719 (9.898)
+Test: [0/79]	Time 0.133 (0.133)	Loss 2.3023 (2.3023)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3025 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:15:12 [INFO] codeq: Epoch 24 — loss=2.3463  train_acc=9.87  val_acc=10.00
+2026-02-27 14:15:12 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:15:12 [INFO] codeq: Epoch 25/100 — lr=8.64484e-04
+Epoch: [24][0/391]	Time 0.201 (0.201)	Data 0.179 (0.179)	Loss 2.3456 (2.3456)	Prec@1 7.812 (7.812)
+Epoch: [24][50/391]	Time 0.017 (0.020)	Data 0.000 (0.004)	Loss 2.3419 (2.3430)	Prec@1 7.812 (9.727)
+Epoch: [24][100/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3379 (2.3414)	Prec@1 12.500 (9.839)
+Epoch: [24][150/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3583 (2.3421)	Prec@1 7.031 (9.856)
+Epoch: [24][200/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3484 (2.3448)	Prec@1 6.250 (9.814)
+Epoch: [24][250/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3451 (2.3453)	Prec@1 14.844 (9.752)
+Epoch: [24][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3426 (2.3450)	Prec@1 6.250 (9.616)
+Epoch: [24][350/391]	Time 0.022 (0.018)	Data 0.000 (0.001)	Loss 2.3390 (2.3443)	Prec@1 8.594 (9.660)
+Test: [0/79]	Time 0.108 (0.108)	Loss 2.3029 (2.3029)	Prec@1 7.031 (7.031)
+Test: [50/79]	Time 0.005 (0.009)	Loss 2.3033 (2.3026)	Prec@1 4.688 (9.972)
+ * Prec@1 10.000
+2026-02-27 14:15:20 [INFO] codeq: Epoch 25 — loss=2.3437  train_acc=9.69  val_acc=10.00
+2026-02-27 14:15:20 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:15:20 [INFO] codeq: Epoch 26/100 — lr=8.53553e-04
+Epoch: [25][0/391]	Time 0.164 (0.164)	Data 0.146 (0.146)	Loss 2.3366 (2.3366)	Prec@1 12.500 (12.500)
+Epoch: [25][50/391]	Time 0.016 (0.019)	Data 0.000 (0.003)	Loss 2.3381 (2.3386)	Prec@1 14.062 (9.084)
+Epoch: [25][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3377 (2.3379)	Prec@1 10.938 (9.607)
+Epoch: [25][150/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3433 (2.3387)	Prec@1 10.938 (9.670)
+Epoch: [25][200/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3418 (2.3396)	Prec@1 9.375 (9.799)
+Epoch: [25][250/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3386 (2.3395)	Prec@1 4.688 (9.833)
+Epoch: [25][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3446 (2.3392)	Prec@1 15.625 (9.814)
+Epoch: [25][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3404 (2.3397)	Prec@1 10.156 (9.829)
+Test: [0/79]	Time 0.101 (0.101)	Loss 2.3027 (2.3027)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3030 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:15:27 [INFO] codeq: Epoch 26 — loss=2.3397  train_acc=9.80  val_acc=10.00
+2026-02-27 14:15:27 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:15:27 [INFO] codeq: Epoch 27/100 — lr=8.42274e-04
+Epoch: [26][0/391]	Time 0.192 (0.192)	Data 0.172 (0.172)	Loss 2.3389 (2.3389)	Prec@1 10.938 (10.938)
+Epoch: [26][50/391]	Time 0.016 (0.020)	Data 0.000 (0.004)	Loss 2.3404 (2.3384)	Prec@1 8.594 (10.432)
+Epoch: [26][100/391]	Time 0.018 (0.018)	Data 0.000 (0.002)	Loss 2.3367 (2.3386)	Prec@1 10.938 (10.303)
+Epoch: [26][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3369 (2.3381)	Prec@1 14.062 (10.110)
+Epoch: [26][200/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3600 (2.3397)	Prec@1 12.500 (10.199)
+Epoch: [26][250/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3512 (2.3429)	Prec@1 13.281 (10.119)
+Epoch: [26][300/391]	Time 0.020 (0.017)	Data 0.000 (0.001)	Loss 2.3474 (2.3439)	Prec@1 8.594 (9.998)
+Epoch: [26][350/391]	Time 0.020 (0.017)	Data 0.000 (0.001)	Loss 2.3436 (2.3440)	Prec@1 8.594 (9.996)
+Test: [0/79]	Time 0.102 (0.102)	Loss 2.3028 (2.3028)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 13.281 (10.386)
+ * Prec@1 10.000
+2026-02-27 14:15:34 [INFO] codeq: Epoch 27 — loss=2.3438  train_acc=9.94  val_acc=10.00
+2026-02-27 14:15:34 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:15:34 [INFO] codeq: Epoch 28/100 — lr=8.30656e-04
+Epoch: [27][0/391]	Time 0.167 (0.167)	Data 0.147 (0.147)	Loss 2.3401 (2.3401)	Prec@1 6.250 (6.250)
+Epoch: [27][50/391]	Time 0.017 (0.019)	Data 0.000 (0.003)	Loss 2.3373 (2.3383)	Prec@1 13.281 (9.804)
+Epoch: [27][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3356 (2.3372)	Prec@1 10.156 (9.932)
+Epoch: [27][150/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3352 (2.3365)	Prec@1 5.469 (10.079)
+Epoch: [27][200/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3370 (2.3364)	Prec@1 10.938 (10.055)
+Epoch: [27][250/391]	Time 0.018 (0.017)	Data 0.000 (0.001)	Loss 2.3354 (2.3363)	Prec@1 7.812 (10.069)
+Epoch: [27][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3513 (2.3378)	Prec@1 9.375 (10.050)
+Epoch: [27][350/391]	Time 0.014 (0.017)	Data 0.000 (0.001)	Loss 2.3463 (2.3394)	Prec@1 6.250 (9.974)
+Test: [0/79]	Time 0.126 (0.126)	Loss 2.3024 (2.3024)	Prec@1 13.281 (13.281)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3023 (2.3026)	Prec@1 15.625 (9.773)
+ * Prec@1 10.000
+2026-02-27 14:15:42 [INFO] codeq: Epoch 28 — loss=2.3399  train_acc=9.90  val_acc=10.00
+2026-02-27 14:15:42 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:15:42 [INFO] codeq: Epoch 29/100 — lr=8.18712e-04
+Epoch: [28][0/391]	Time 0.195 (0.195)	Data 0.176 (0.176)	Loss 2.3427 (2.3427)	Prec@1 10.156 (10.156)
+Epoch: [28][50/391]	Time 0.016 (0.024)	Data 0.000 (0.006)	Loss 2.3389 (2.3406)	Prec@1 8.594 (10.386)
+Epoch: [28][100/391]	Time 0.021 (0.022)	Data 0.000 (0.003)	Loss 2.3363 (2.3393)	Prec@1 9.375 (9.847)
+Epoch: [28][150/391]	Time 0.017 (0.020)	Data 0.000 (0.002)	Loss 2.3361 (2.3381)	Prec@1 5.469 (9.903)
+Epoch: [28][200/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3335 (2.3372)	Prec@1 13.281 (9.853)
+Epoch: [28][250/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3402 (2.3379)	Prec@1 10.938 (9.885)
+Epoch: [28][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3362 (2.3378)	Prec@1 8.594 (9.808)
+Epoch: [28][350/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3343 (2.3375)	Prec@1 10.156 (9.791)
+Test: [0/79]	Time 0.106 (0.106)	Loss 2.3025 (2.3025)	Prec@1 10.156 (10.156)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.938 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:15:49 [INFO] codeq: Epoch 29 — loss=2.3378  train_acc=9.78  val_acc=10.00
+2026-02-27 14:15:50 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:15:50 [INFO] codeq: Epoch 30/100 — lr=8.06454e-04
+Epoch: [29][0/391]	Time 0.246 (0.246)	Data 0.225 (0.225)	Loss 2.3431 (2.3431)	Prec@1 4.688 (4.688)
+Epoch: [29][50/391]	Time 0.016 (0.023)	Data 0.000 (0.006)	Loss 2.3371 (2.3400)	Prec@1 10.938 (9.835)
+Epoch: [29][100/391]	Time 0.016 (0.020)	Data 0.000 (0.003)	Loss 2.3349 (2.3383)	Prec@1 10.938 (9.870)
+Epoch: [29][150/391]	Time 0.020 (0.019)	Data 0.000 (0.002)	Loss 2.3336 (2.3371)	Prec@1 13.281 (10.022)
+Epoch: [29][200/391]	Time 0.015 (0.018)	Data 0.000 (0.002)	Loss 2.3508 (2.3393)	Prec@1 10.156 (10.044)
+Epoch: [29][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3437 (2.3408)	Prec@1 10.156 (10.013)
+Epoch: [29][300/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3407 (2.3410)	Prec@1 7.031 (9.938)
+Epoch: [29][350/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3383 (2.3407)	Prec@1 6.250 (9.931)
+Test: [0/79]	Time 0.141 (0.141)	Loss 2.3030 (2.3030)	Prec@1 10.156 (10.156)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3027 (2.3026)	Prec@1 10.938 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:15:57 [INFO] codeq: Epoch 30 — loss=2.3403  train_acc=9.81  val_acc=10.00
+2026-02-27 14:15:57 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:15:57 [INFO] codeq: Epoch 31/100 — lr=7.93893e-04
+Epoch: [30][0/391]	Time 0.196 (0.196)	Data 0.176 (0.176)	Loss 2.3353 (2.3353)	Prec@1 8.594 (8.594)
+Epoch: [30][50/391]	Time 0.016 (0.022)	Data 0.000 (0.004)	Loss 2.3334 (2.3342)	Prec@1 8.594 (10.340)
+Epoch: [30][100/391]	Time 0.016 (0.020)	Data 0.000 (0.002)	Loss 2.3328 (2.3337)	Prec@1 12.500 (9.963)
+Epoch: [30][150/391]	Time 0.018 (0.019)	Data 0.000 (0.001)	Loss 2.3430 (2.3345)	Prec@1 10.156 (9.923)
+Epoch: [30][200/391]	Time 0.018 (0.019)	Data 0.000 (0.001)	Loss 2.3376 (2.3360)	Prec@1 14.844 (9.888)
+Epoch: [30][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3352 (2.3362)	Prec@1 9.375 (9.870)
+Epoch: [30][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3333 (2.3359)	Prec@1 10.938 (9.866)
+Epoch: [30][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3321 (2.3355)	Prec@1 12.500 (9.882)
+Test: [0/79]	Time 0.116 (0.116)	Loss 2.3029 (2.3029)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3023 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:16:05 [INFO] codeq: Epoch 31 — loss=2.3354  train_acc=9.84  val_acc=10.00
+2026-02-27 14:16:05 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:16:05 [INFO] codeq: Epoch 32/100 — lr=7.81042e-04
+Epoch: [31][0/391]	Time 0.188 (0.188)	Data 0.168 (0.168)	Loss 2.3485 (2.3485)	Prec@1 7.031 (7.031)
+Epoch: [31][50/391]	Time 0.016 (0.020)	Data 0.000 (0.003)	Loss 2.3412 (2.3454)	Prec@1 15.625 (9.436)
+Epoch: [31][100/391]	Time 0.017 (0.018)	Data 0.000 (0.002)	Loss 2.3389 (2.3429)	Prec@1 10.156 (9.677)
+Epoch: [31][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3346 (2.3412)	Prec@1 14.062 (9.644)
+Epoch: [31][200/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3336 (2.3396)	Prec@1 10.938 (9.814)
+Epoch: [31][250/391]	Time 0.018 (0.017)	Data 0.000 (0.001)	Loss 2.3322 (2.3383)	Prec@1 7.031 (9.801)
+Epoch: [31][300/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3311 (2.3373)	Prec@1 5.469 (9.795)
+Epoch: [31][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3326 (2.3366)	Prec@1 10.156 (9.765)
+Test: [0/79]	Time 0.105 (0.105)	Loss 2.3026 (2.3026)	Prec@1 13.281 (13.281)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3024 (2.3026)	Prec@1 15.625 (9.773)
+ * Prec@1 10.000
+2026-02-27 14:16:12 [INFO] codeq: Epoch 32 — loss=2.3365  train_acc=9.79  val_acc=10.00
+2026-02-27 14:16:12 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:16:12 [INFO] codeq: Epoch 33/100 — lr=7.67913e-04
+Epoch: [32][0/391]	Time 0.189 (0.189)	Data 0.170 (0.170)	Loss 2.3390 (2.3390)	Prec@1 14.844 (14.844)
+Epoch: [32][50/391]	Time 0.016 (0.020)	Data 0.000 (0.004)	Loss 2.3361 (2.3371)	Prec@1 6.250 (10.218)
+Epoch: [32][100/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3343 (2.3359)	Prec@1 8.594 (10.032)
+Epoch: [32][150/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3326 (2.3349)	Prec@1 10.156 (10.068)
+Epoch: [32][200/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3479 (2.3381)	Prec@1 7.812 (9.942)
+Epoch: [32][250/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3399 (2.3393)	Prec@1 10.938 (9.817)
+Epoch: [32][300/391]	Time 0.018 (0.017)	Data 0.000 (0.001)	Loss 2.3376 (2.3393)	Prec@1 7.031 (9.741)
+Epoch: [32][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3348 (2.3389)	Prec@1 9.375 (9.693)
+Test: [0/79]	Time 0.131 (0.131)	Loss 2.3027 (2.3027)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3024 (2.3026)	Prec@1 13.281 (10.386)
+ * Prec@1 10.000
+2026-02-27 14:16:20 [INFO] codeq: Epoch 33 — loss=2.3385  train_acc=9.70  val_acc=10.00
+2026-02-27 14:16:20 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:16:20 [INFO] codeq: Epoch 34/100 — lr=7.54521e-04
+Epoch: [33][0/391]	Time 0.183 (0.183)	Data 0.162 (0.162)	Loss 2.3335 (2.3335)	Prec@1 10.156 (10.156)
+Epoch: [33][50/391]	Time 0.016 (0.020)	Data 0.000 (0.003)	Loss 2.3322 (2.3327)	Prec@1 8.594 (10.325)
+Epoch: [33][100/391]	Time 0.019 (0.018)	Data 0.000 (0.002)	Loss 2.3330 (2.3323)	Prec@1 6.250 (10.094)
+Epoch: [33][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3488 (2.3342)	Prec@1 11.719 (9.991)
+Epoch: [33][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3423 (2.3369)	Prec@1 8.594 (10.055)
+Epoch: [33][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3377 (2.3376)	Prec@1 13.281 (10.103)
+Epoch: [33][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3352 (2.3375)	Prec@1 10.938 (10.065)
+Epoch: [33][350/391]	Time 0.021 (0.018)	Data 0.000 (0.001)	Loss 2.3336 (2.3370)	Prec@1 7.812 (9.974)
+Test: [0/79]	Time 0.103 (0.103)	Loss 2.3028 (2.3028)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3031 (2.3026)	Prec@1 10.938 (9.804)
+ * Prec@1 10.000
+2026-02-27 14:16:27 [INFO] codeq: Epoch 34 — loss=2.3366  train_acc=9.94  val_acc=10.00
+2026-02-27 14:16:27 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:16:27 [INFO] codeq: Epoch 35/100 — lr=7.40877e-04
+Epoch: [34][0/391]	Time 0.209 (0.209)	Data 0.184 (0.184)	Loss 2.3318 (2.3318)	Prec@1 7.031 (7.031)
+Epoch: [34][50/391]	Time 0.015 (0.021)	Data 0.000 (0.004)	Loss 2.3325 (2.3315)	Prec@1 11.719 (10.631)
+Epoch: [34][100/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3308 (2.3316)	Prec@1 8.594 (10.226)
+Epoch: [34][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3314 (2.3315)	Prec@1 11.719 (10.022)
+Epoch: [34][200/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3347 (2.3320)	Prec@1 3.125 (9.783)
+Epoch: [34][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3315 (2.3321)	Prec@1 17.188 (9.845)
+Epoch: [34][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3318 (2.3320)	Prec@1 10.938 (9.808)
+Epoch: [34][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3315 (2.3320)	Prec@1 7.812 (9.776)
+Test: [0/79]	Time 0.106 (0.106)	Loss 2.3026 (2.3026)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3027 (2.3026)	Prec@1 10.938 (9.804)
+ * Prec@1 10.000
+2026-02-27 14:16:35 [INFO] codeq: Epoch 35 — loss=2.3319  train_acc=9.71  val_acc=10.00
+2026-02-27 14:16:35 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:16:35 [INFO] codeq: Epoch 36/100 — lr=7.26995e-04
+Epoch: [35][0/391]	Time 0.179 (0.179)	Data 0.159 (0.159)	Loss 2.3303 (2.3303)	Prec@1 10.156 (10.156)
+Epoch: [35][50/391]	Time 0.017 (0.023)	Data 0.000 (0.006)	Loss 2.3464 (2.3473)	Prec@1 13.281 (10.922)
+Epoch: [35][100/391]	Time 0.017 (0.020)	Data 0.000 (0.003)	Loss 2.3410 (2.3453)	Prec@1 7.031 (10.442)
+Epoch: [35][150/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3360 (2.3431)	Prec@1 9.375 (10.182)
+Epoch: [35][200/391]	Time 0.020 (0.019)	Data 0.000 (0.002)	Loss 2.3345 (2.3412)	Prec@1 9.375 (10.098)
+Epoch: [35][250/391]	Time 0.020 (0.019)	Data 0.000 (0.001)	Loss 2.3321 (2.3397)	Prec@1 10.156 (10.057)
+Epoch: [35][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3316 (2.3384)	Prec@1 12.500 (10.008)
+Epoch: [35][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3305 (2.3374)	Prec@1 10.156 (10.047)
+Test: [0/79]	Time 0.138 (0.138)	Loss 2.3023 (2.3023)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.010)	Loss 2.3024 (2.3026)	Prec@1 10.938 (9.804)
+ * Prec@1 10.000
+2026-02-27 14:16:42 [INFO] codeq: Epoch 36 — loss=2.3367  train_acc=9.99  val_acc=10.00
+2026-02-27 14:16:42 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:16:42 [INFO] codeq: Epoch 37/100 — lr=7.12890e-04
+Epoch: [36][0/391]	Time 0.187 (0.187)	Data 0.167 (0.167)	Loss 2.3304 (2.3304)	Prec@1 6.250 (6.250)
+Epoch: [36][50/391]	Time 0.015 (0.020)	Data 0.000 (0.003)	Loss 2.3314 (2.3316)	Prec@1 11.719 (9.911)
+Epoch: [36][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3301 (2.3311)	Prec@1 10.156 (9.901)
+Epoch: [36][150/391]	Time 0.020 (0.017)	Data 0.000 (0.001)	Loss 2.3309 (2.3310)	Prec@1 10.156 (9.856)
+Epoch: [36][200/391]	Time 0.020 (0.017)	Data 0.000 (0.001)	Loss 2.3306 (2.3310)	Prec@1 8.594 (9.838)
+Epoch: [36][250/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3330 (2.3314)	Prec@1 8.594 (9.836)
+Epoch: [36][300/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3469 (2.3322)	Prec@1 6.250 (9.754)
+Epoch: [36][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3441 (2.3338)	Prec@1 11.719 (9.675)
+Test: [0/79]	Time 0.109 (0.109)	Loss 2.3024 (2.3024)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3028 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:16:50 [INFO] codeq: Epoch 37 — loss=2.3348  train_acc=9.57  val_acc=10.00
+2026-02-27 14:16:50 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:16:50 [INFO] codeq: Epoch 38/100 — lr=6.98574e-04
+Epoch: [37][0/391]	Time 0.180 (0.180)	Data 0.161 (0.161)	Loss 2.3433 (2.3433)	Prec@1 15.625 (15.625)
+Epoch: [37][50/391]	Time 0.016 (0.020)	Data 0.000 (0.003)	Loss 2.3415 (2.3423)	Prec@1 14.844 (10.524)
+Epoch: [37][100/391]	Time 0.021 (0.018)	Data 0.000 (0.002)	Loss 2.3422 (2.3421)	Prec@1 12.500 (10.149)
+Epoch: [37][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3404 (2.3417)	Prec@1 10.938 (9.944)
+Epoch: [37][200/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3382 (2.3412)	Prec@1 10.938 (9.849)
+Epoch: [37][250/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3381 (2.3408)	Prec@1 14.844 (9.727)
+Epoch: [37][300/391]	Time 0.018 (0.017)	Data 0.000 (0.001)	Loss 2.3394 (2.3404)	Prec@1 10.156 (9.601)
+Epoch: [37][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3378 (2.3401)	Prec@1 10.156 (9.696)
+Test: [0/79]	Time 0.099 (0.099)	Loss 2.3022 (2.3022)	Prec@1 10.156 (10.156)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3024 (2.3026)	Prec@1 10.938 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:16:57 [INFO] codeq: Epoch 38 — loss=2.3399  train_acc=9.67  val_acc=10.00
+2026-02-27 14:16:57 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:16:57 [INFO] codeq: Epoch 39/100 — lr=6.84062e-04
+Epoch: [38][0/391]	Time 0.192 (0.192)	Data 0.174 (0.174)	Loss 2.3374 (2.3374)	Prec@1 7.031 (7.031)
+Epoch: [38][50/391]	Time 0.017 (0.020)	Data 0.000 (0.004)	Loss 2.3362 (2.3371)	Prec@1 10.156 (9.896)
+Epoch: [38][100/391]	Time 0.017 (0.018)	Data 0.000 (0.002)	Loss 2.3369 (2.3369)	Prec@1 8.594 (10.102)
+Epoch: [38][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3368 (2.3368)	Prec@1 10.938 (10.115)
+Epoch: [38][200/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3365 (2.3368)	Prec@1 10.938 (10.020)
+Epoch: [38][250/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3361 (2.3368)	Prec@1 10.938 (10.128)
+Epoch: [38][300/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3372 (2.3368)	Prec@1 9.375 (10.029)
+Epoch: [38][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3367 (2.3367)	Prec@1 9.375 (9.996)
+Test: [0/79]	Time 0.118 (0.118)	Loss 2.3025 (2.3025)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3029 (2.3026)	Prec@1 6.250 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:17:04 [INFO] codeq: Epoch 39 — loss=2.3366  train_acc=9.90  val_acc=10.00
+2026-02-27 14:17:04 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:17:04 [INFO] codeq: Epoch 40/100 — lr=6.69369e-04
+Epoch: [39][0/391]	Time 0.203 (0.203)	Data 0.185 (0.185)	Loss 2.3360 (2.3360)	Prec@1 7.031 (7.031)
+Epoch: [39][50/391]	Time 0.017 (0.020)	Data 0.000 (0.004)	Loss 2.3361 (2.3360)	Prec@1 14.844 (10.692)
+Epoch: [39][100/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3366 (2.3360)	Prec@1 8.594 (10.110)
+Epoch: [39][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3356 (2.3360)	Prec@1 10.156 (9.954)
+Epoch: [39][200/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3374 (2.3360)	Prec@1 7.031 (10.071)
+Epoch: [39][250/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3356 (2.3360)	Prec@1 10.938 (9.963)
+Epoch: [39][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3356 (2.3359)	Prec@1 7.031 (9.967)
+Epoch: [39][350/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3360 (2.3359)	Prec@1 9.375 (9.793)
+Test: [0/79]	Time 0.121 (0.121)	Loss 2.3027 (2.3027)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3025 (2.3026)	Prec@1 13.281 (10.386)
+ * Prec@1 10.000
+2026-02-27 14:17:12 [INFO] codeq: Epoch 40 — loss=2.3359  train_acc=9.78  val_acc=10.00
+2026-02-27 14:17:12 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:17:12 [INFO] codeq: Epoch 41/100 — lr=6.54508e-04
+Epoch: [40][0/391]	Time 0.199 (0.199)	Data 0.172 (0.172)	Loss 2.3363 (2.3363)	Prec@1 11.719 (11.719)
+Epoch: [40][50/391]	Time 0.018 (0.021)	Data 0.001 (0.004)	Loss 2.3355 (2.3359)	Prec@1 8.594 (9.835)
+Epoch: [40][100/391]	Time 0.015 (0.019)	Data 0.000 (0.002)	Loss 2.3367 (2.3360)	Prec@1 7.031 (9.955)
+Epoch: [40][150/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3357 (2.3361)	Prec@1 10.156 (9.846)
+Epoch: [40][200/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3359 (2.3360)	Prec@1 8.594 (9.873)
+Epoch: [40][250/391]	Time 0.022 (0.018)	Data 0.000 (0.001)	Loss 2.3365 (2.3360)	Prec@1 8.594 (9.789)
+Epoch: [40][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3365 (2.3361)	Prec@1 8.594 (9.697)
+Epoch: [40][350/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3360 (2.3362)	Prec@1 7.812 (9.678)
+Test: [0/79]	Time 0.126 (0.126)	Loss 2.3031 (2.3031)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3032 (2.3026)	Prec@1 6.250 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:17:20 [INFO] codeq: Epoch 41 — loss=2.3362  train_acc=9.63  val_acc=10.00
+2026-02-27 14:17:20 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:17:20 [INFO] codeq: Epoch 42/100 — lr=6.39496e-04
+Epoch: [41][0/391]	Time 0.186 (0.186)	Data 0.168 (0.168)	Loss 2.3364 (2.3364)	Prec@1 9.375 (9.375)
+Epoch: [41][50/391]	Time 0.017 (0.022)	Data 0.000 (0.004)	Loss 2.3406 (2.3377)	Prec@1 4.688 (9.544)
+Epoch: [41][100/391]	Time 0.017 (0.020)	Data 0.000 (0.002)	Loss 2.3397 (2.3389)	Prec@1 10.156 (9.607)
+Epoch: [41][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3408 (2.3393)	Prec@1 10.156 (9.654)
+Epoch: [41][200/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3402 (2.3395)	Prec@1 9.375 (9.581)
+Epoch: [41][250/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3392 (2.3395)	Prec@1 12.500 (9.683)
+Epoch: [41][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3392 (2.3395)	Prec@1 14.062 (9.689)
+Epoch: [41][350/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3397 (2.3395)	Prec@1 7.812 (9.716)
+Test: [0/79]	Time 0.101 (0.101)	Loss 2.3029 (2.3029)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3030 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:17:27 [INFO] codeq: Epoch 42 — loss=2.3395  train_acc=9.67  val_acc=10.00
+2026-02-27 14:17:27 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:17:27 [INFO] codeq: Epoch 43/100 — lr=6.24345e-04
+Epoch: [42][0/391]	Time 0.198 (0.198)	Data 0.178 (0.178)	Loss 2.3387 (2.3387)	Prec@1 11.719 (11.719)
+Epoch: [42][50/391]	Time 0.017 (0.020)	Data 0.000 (0.004)	Loss 2.3382 (2.3386)	Prec@1 14.844 (10.049)
+Epoch: [42][100/391]	Time 0.017 (0.018)	Data 0.000 (0.002)	Loss 2.3376 (2.3385)	Prec@1 13.281 (10.265)
+Epoch: [42][150/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3382 (2.3384)	Prec@1 7.812 (10.182)
+Epoch: [42][200/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.3390 (2.3384)	Prec@1 4.688 (10.016)
+Epoch: [42][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3381 (2.3383)	Prec@1 11.719 (9.907)
+Epoch: [42][300/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3380 (2.3383)	Prec@1 6.250 (9.837)
+Epoch: [42][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3390 (2.3383)	Prec@1 11.719 (9.811)
+Test: [0/79]	Time 0.102 (0.102)	Loss 2.3026 (2.3026)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3027 (2.3026)	Prec@1 10.938 (9.804)
+ * Prec@1 10.000
+2026-02-27 14:17:34 [INFO] codeq: Epoch 43 — loss=2.3384  train_acc=9.77  val_acc=10.00
+2026-02-27 14:17:34 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:17:34 [INFO] codeq: Epoch 44/100 — lr=6.09072e-04
+Epoch: [43][0/391]	Time 0.170 (0.170)	Data 0.151 (0.151)	Loss 2.3382 (2.3382)	Prec@1 10.938 (10.938)
+Epoch: [43][50/391]	Time 0.016 (0.021)	Data 0.000 (0.003)	Loss 2.3385 (2.3387)	Prec@1 10.156 (9.635)
+Epoch: [43][100/391]	Time 0.021 (0.019)	Data 0.000 (0.002)	Loss 2.3384 (2.3387)	Prec@1 11.719 (9.437)
+Epoch: [43][150/391]	Time 0.016 (0.019)	Data 0.000 (0.001)	Loss 2.3381 (2.3386)	Prec@1 8.594 (9.634)
+Epoch: [43][200/391]	Time 0.018 (0.019)	Data 0.000 (0.001)	Loss 2.3384 (2.3385)	Prec@1 8.594 (9.659)
+Epoch: [43][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3392 (2.3385)	Prec@1 9.375 (9.680)
+Epoch: [43][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3402 (2.3387)	Prec@1 13.281 (9.658)
+Epoch: [43][350/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3406 (2.3389)	Prec@1 8.594 (9.635)
+Test: [0/79]	Time 0.104 (0.104)	Loss 2.3025 (2.3025)	Prec@1 10.156 (10.156)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.202)
+ * Prec@1 10.000
+2026-02-27 14:17:42 [INFO] codeq: Epoch 44 — loss=2.3390  train_acc=9.61  val_acc=10.00
+2026-02-27 14:17:42 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:17:42 [INFO] codeq: Epoch 45/100 — lr=5.93691e-04
+Epoch: [44][0/391]	Time 0.201 (0.201)	Data 0.179 (0.179)	Loss 2.3396 (2.3396)	Prec@1 9.375 (9.375)
+Epoch: [44][50/391]	Time 0.018 (0.021)	Data 0.000 (0.004)	Loss 2.3400 (2.3398)	Prec@1 14.062 (9.697)
+Epoch: [44][100/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3391 (2.3398)	Prec@1 9.375 (9.793)
+Epoch: [44][150/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3385 (2.3397)	Prec@1 12.500 (9.861)
+Epoch: [44][200/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3403 (2.3397)	Prec@1 10.156 (9.869)
+Epoch: [44][250/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3395 (2.3397)	Prec@1 10.938 (9.945)
+Epoch: [44][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3403 (2.3397)	Prec@1 8.594 (9.897)
+Epoch: [44][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3409 (2.3398)	Prec@1 11.719 (9.820)
+Test: [0/79]	Time 0.099 (0.099)	Loss 2.3025 (2.3025)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3029 (2.3026)	Prec@1 10.938 (9.804)
+ * Prec@1 10.000
+2026-02-27 14:17:49 [INFO] codeq: Epoch 45 — loss=2.3399  train_acc=9.78  val_acc=10.00
+2026-02-27 14:17:49 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:17:49 [INFO] codeq: Epoch 46/100 — lr=5.78217e-04
+Epoch: [45][0/391]	Time 0.177 (0.177)	Data 0.155 (0.155)	Loss 2.3414 (2.3414)	Prec@1 7.031 (7.031)
+Epoch: [45][50/391]	Time 0.017 (0.021)	Data 0.000 (0.003)	Loss 2.3417 (2.3409)	Prec@1 9.375 (9.436)
+Epoch: [45][100/391]	Time 0.018 (0.019)	Data 0.000 (0.002)	Loss 2.3412 (2.3412)	Prec@1 8.594 (9.669)
+Epoch: [45][150/391]	Time 0.016 (0.019)	Data 0.000 (0.001)	Loss 2.3411 (2.3412)	Prec@1 8.594 (9.737)
+Epoch: [45][200/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3499 (2.3416)	Prec@1 11.719 (9.721)
+Epoch: [45][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3535 (2.3435)	Prec@1 7.812 (9.805)
+Epoch: [45][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3536 (2.3452)	Prec@1 11.719 (9.777)
+Epoch: [45][350/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3508 (2.3462)	Prec@1 10.156 (9.765)
+Test: [0/79]	Time 0.113 (0.113)	Loss 2.3027 (2.3027)	Prec@1 7.031 (7.031)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3028 (2.3026)	Prec@1 4.688 (9.972)
+ * Prec@1 10.000
+2026-02-27 14:17:57 [INFO] codeq: Epoch 46 — loss=2.3467  train_acc=9.71  val_acc=10.00
+2026-02-27 14:17:57 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:17:57 [INFO] codeq: Epoch 47/100 — lr=5.62667e-04
+Epoch: [46][0/391]	Time 0.205 (0.205)	Data 0.179 (0.179)	Loss 2.3505 (2.3505)	Prec@1 8.594 (8.594)
+Epoch: [46][50/391]	Time 0.020 (0.022)	Data 0.000 (0.004)	Loss 2.3489 (2.3499)	Prec@1 8.594 (9.574)
+Epoch: [46][100/391]	Time 0.016 (0.020)	Data 0.000 (0.002)	Loss 2.3491 (2.3494)	Prec@1 10.156 (9.824)
+Epoch: [46][150/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3477 (2.3489)	Prec@1 8.594 (9.799)
+Epoch: [46][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3461 (2.3484)	Prec@1 14.844 (9.853)
+Epoch: [46][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3454 (2.3479)	Prec@1 5.469 (9.749)
+Epoch: [46][300/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3449 (2.3475)	Prec@1 6.250 (9.795)
+Epoch: [46][350/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3446 (2.3470)	Prec@1 7.031 (9.869)
+Test: [0/79]	Time 0.107 (0.107)	Loss 2.3026 (2.3026)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.006 (0.010)	Loss 2.3028 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:18:05 [INFO] codeq: Epoch 47 — loss=2.3467  train_acc=9.81  val_acc=10.00
+2026-02-27 14:18:05 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:18:05 [INFO] codeq: Epoch 48/100 — lr=5.47054e-04
+Epoch: [47][0/391]	Time 0.202 (0.202)	Data 0.184 (0.184)	Loss 2.3433 (2.3433)	Prec@1 10.938 (10.938)
+Epoch: [47][50/391]	Time 0.015 (0.020)	Data 0.000 (0.004)	Loss 2.3673 (2.3601)	Prec@1 7.812 (9.605)
+Epoch: [47][100/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3654 (2.3628)	Prec@1 10.156 (9.986)
+Epoch: [47][150/391]	Time 0.014 (0.018)	Data 0.000 (0.001)	Loss 2.3643 (2.3632)	Prec@1 8.594 (9.815)
+Epoch: [47][200/391]	Time 0.021 (0.018)	Data 0.000 (0.001)	Loss 2.3622 (2.3631)	Prec@1 7.812 (9.907)
+Epoch: [47][250/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3604 (2.3628)	Prec@1 7.812 (9.789)
+Epoch: [47][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3587 (2.3623)	Prec@1 7.812 (9.718)
+Epoch: [47][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3584 (2.3617)	Prec@1 10.938 (9.789)
+Test: [0/79]	Time 0.111 (0.111)	Loss 2.3023 (2.3023)	Prec@1 13.281 (13.281)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3024 (2.3026)	Prec@1 15.625 (9.773)
+ * Prec@1 10.000
+2026-02-27 14:18:12 [INFO] codeq: Epoch 48 — loss=2.3613  train_acc=9.76  val_acc=10.00
+2026-02-27 14:18:13 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:18:13 [INFO] codeq: Epoch 49/100 — lr=5.31395e-04
+Epoch: [48][0/391]	Time 0.170 (0.170)	Data 0.150 (0.150)	Loss 2.3575 (2.3575)	Prec@1 13.281 (13.281)
+Epoch: [48][50/391]	Time 0.016 (0.020)	Data 0.000 (0.003)	Loss 2.3545 (2.3561)	Prec@1 15.625 (9.819)
+Epoch: [48][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3538 (2.3553)	Prec@1 12.500 (9.793)
+Epoch: [48][150/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3521 (2.3546)	Prec@1 9.375 (9.892)
+Epoch: [48][200/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3515 (2.3541)	Prec@1 7.031 (9.962)
+Epoch: [48][250/391]	Time 0.019 (0.018)	Data 0.000 (0.001)	Loss 2.3498 (2.3535)	Prec@1 16.406 (10.016)
+Epoch: [48][300/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3506 (2.3530)	Prec@1 8.594 (10.024)
+Epoch: [48][350/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3508 (2.3525)	Prec@1 7.031 (9.938)
+Test: [0/79]	Time 0.110 (0.110)	Loss 2.3025 (2.3025)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.005 (0.011)	Loss 2.3025 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:18:20 [INFO] codeq: Epoch 49 — loss=2.3521  train_acc=9.89  val_acc=10.00
+2026-02-27 14:18:20 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:18:20 [INFO] codeq: Epoch 50/100 — lr=5.15705e-04
+Epoch: [49][0/391]	Time 0.196 (0.196)	Data 0.175 (0.175)	Loss 2.3481 (2.3481)	Prec@1 14.844 (14.844)
+Epoch: [49][50/391]	Time 0.019 (0.021)	Data 0.000 (0.004)	Loss 2.3483 (2.3486)	Prec@1 14.062 (10.202)
+Epoch: [49][100/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3464 (2.3484)	Prec@1 12.500 (10.203)
+Epoch: [49][150/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.3480 (2.3480)	Prec@1 8.594 (10.187)
+Epoch: [49][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3480 (2.3477)	Prec@1 7.812 (10.137)
+Epoch: [49][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3464 (2.3476)	Prec@1 11.719 (10.147)
+Epoch: [49][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3473 (2.3474)	Prec@1 7.812 (10.060)
+Epoch: [49][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3470 (2.3474)	Prec@1 10.156 (10.043)
+Test: [0/79]	Time 0.109 (0.109)	Loss 2.3028 (2.3028)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3024 (2.3026)	Prec@1 13.281 (10.386)
+ * Prec@1 10.000
+2026-02-27 14:18:28 [INFO] codeq: Epoch 50 — loss=2.3473  train_acc=9.95  val_acc=10.00
+2026-02-27 14:18:28 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:18:28 [INFO] codeq: Epoch 51/100 — lr=5.00000e-04
+Epoch: [50][0/391]	Time 0.195 (0.195)	Data 0.171 (0.171)	Loss 2.3473 (2.3473)	Prec@1 2.344 (2.344)
+Epoch: [50][50/391]	Time 0.019 (0.020)	Data 0.000 (0.004)	Loss 2.3460 (2.3469)	Prec@1 9.375 (10.018)
+Epoch: [50][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3472 (2.3468)	Prec@1 10.938 (9.971)
+Epoch: [50][150/391]	Time 0.019 (0.019)	Data 0.000 (0.001)	Loss 2.3542 (2.3488)	Prec@1 13.281 (9.960)
+Epoch: [50][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3558 (2.3503)	Prec@1 7.812 (9.931)
+Epoch: [50][250/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3559 (2.3512)	Prec@1 9.375 (9.820)
+Epoch: [50][300/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3541 (2.3517)	Prec@1 11.719 (9.692)
+Epoch: [50][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3529 (2.3520)	Prec@1 14.062 (9.720)
+Test: [0/79]	Time 0.109 (0.109)	Loss 2.3027 (2.3027)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.938 (9.804)
+ * Prec@1 10.000
+2026-02-27 14:18:35 [INFO] codeq: Epoch 51 — loss=2.3521  train_acc=9.69  val_acc=10.00
+2026-02-27 14:18:35 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:18:35 [INFO] codeq: Epoch 52/100 — lr=4.84295e-04
+Epoch: [51][0/391]	Time 0.215 (0.215)	Data 0.191 (0.191)	Loss 2.3521 (2.3521)	Prec@1 14.062 (14.062)
+Epoch: [51][50/391]	Time 0.015 (0.021)	Data 0.000 (0.004)	Loss 2.3511 (2.3516)	Prec@1 7.031 (10.095)
+Epoch: [51][100/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3502 (2.3511)	Prec@1 10.938 (9.963)
+Epoch: [51][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3540 (2.3521)	Prec@1 13.281 (10.048)
+Epoch: [51][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3551 (2.3527)	Prec@1 10.938 (9.915)
+Epoch: [51][250/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3543 (2.3531)	Prec@1 7.031 (9.960)
+Epoch: [51][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3548 (2.3533)	Prec@1 10.156 (9.845)
+Epoch: [51][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3524 (2.3532)	Prec@1 7.031 (9.862)
+Test: [0/79]	Time 0.090 (0.090)	Loss 2.3028 (2.3028)	Prec@1 7.031 (7.031)
+Test: [50/79]	Time 0.005 (0.017)	Loss 2.3028 (2.3026)	Prec@1 4.688 (9.972)
+ * Prec@1 10.000
+2026-02-27 14:18:43 [INFO] codeq: Epoch 52 — loss=2.3531  train_acc=9.76  val_acc=10.00
+2026-02-27 14:18:43 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:18:43 [INFO] codeq: Epoch 53/100 — lr=4.68605e-04
+Epoch: [52][0/391]	Time 0.189 (0.189)	Data 0.170 (0.170)	Loss 2.3521 (2.3521)	Prec@1 9.375 (9.375)
+Epoch: [52][50/391]	Time 0.017 (0.022)	Data 0.000 (0.004)	Loss 2.3497 (2.3510)	Prec@1 8.594 (9.942)
+Epoch: [52][100/391]	Time 0.015 (0.019)	Data 0.000 (0.002)	Loss 2.3500 (2.3504)	Prec@1 10.938 (10.342)
+Epoch: [52][150/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3486 (2.3501)	Prec@1 10.156 (10.301)
+Epoch: [52][200/391]	Time 0.019 (0.018)	Data 0.000 (0.001)	Loss 2.3487 (2.3498)	Prec@1 8.594 (10.113)
+Epoch: [52][250/391]	Time 0.020 (0.017)	Data 0.000 (0.001)	Loss 2.3482 (2.3496)	Prec@1 9.375 (9.929)
+Epoch: [52][300/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3613 (2.3505)	Prec@1 7.812 (9.876)
+Epoch: [52][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3636 (2.3522)	Prec@1 6.250 (9.813)
+Test: [0/79]	Time 0.130 (0.130)	Loss 2.3026 (2.3026)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.005 (0.011)	Loss 2.3024 (2.3026)	Prec@1 13.281 (10.386)
+ * Prec@1 10.000
+2026-02-27 14:18:50 [INFO] codeq: Epoch 53 — loss=2.3532  train_acc=9.77  val_acc=10.00
+2026-02-27 14:18:50 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:18:50 [INFO] codeq: Epoch 54/100 — lr=4.52946e-04
+Epoch: [53][0/391]	Time 0.188 (0.188)	Data 0.170 (0.170)	Loss 2.3625 (2.3625)	Prec@1 14.062 (14.062)
+Epoch: [53][50/391]	Time 0.016 (0.021)	Data 0.000 (0.004)	Loss 2.3588 (2.3602)	Prec@1 10.938 (9.972)
+Epoch: [53][100/391]	Time 0.019 (0.020)	Data 0.000 (0.002)	Loss 2.3574 (2.3592)	Prec@1 13.281 (9.661)
+Epoch: [53][150/391]	Time 0.019 (0.019)	Data 0.000 (0.002)	Loss 2.3559 (2.3583)	Prec@1 7.812 (9.603)
+Epoch: [53][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3554 (2.3576)	Prec@1 7.812 (9.682)
+Epoch: [53][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3525 (2.3569)	Prec@1 11.719 (9.671)
+Epoch: [53][300/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3532 (2.3562)	Prec@1 11.719 (9.723)
+Epoch: [53][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3511 (2.3556)	Prec@1 10.938 (9.716)
+Test: [0/79]	Time 0.101 (0.101)	Loss 2.3026 (2.3026)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.005 (0.011)	Loss 2.3027 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:18:58 [INFO] codeq: Epoch 54 — loss=2.3551  train_acc=9.67  val_acc=10.00
+2026-02-27 14:18:58 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:18:58 [INFO] codeq: Epoch 55/100 — lr=4.37333e-04
+Epoch: [54][0/391]	Time 0.182 (0.182)	Data 0.163 (0.163)	Loss 2.3496 (2.3496)	Prec@1 10.156 (10.156)
+Epoch: [54][50/391]	Time 0.019 (0.020)	Data 0.000 (0.004)	Loss 2.3502 (2.3497)	Prec@1 7.812 (9.911)
+Epoch: [54][100/391]	Time 0.017 (0.018)	Data 0.000 (0.002)	Loss 2.3471 (2.3491)	Prec@1 8.594 (9.878)
+Epoch: [54][150/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3466 (2.3486)	Prec@1 9.375 (9.887)
+Epoch: [54][200/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3470 (2.3483)	Prec@1 6.250 (9.756)
+Epoch: [54][250/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3461 (2.3480)	Prec@1 7.031 (9.674)
+Epoch: [54][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3469 (2.3478)	Prec@1 10.156 (9.710)
+Epoch: [54][350/391]	Time 0.022 (0.017)	Data 0.000 (0.001)	Loss 2.3457 (2.3475)	Prec@1 7.812 (9.702)
+Test: [0/79]	Time 0.102 (0.102)	Loss 2.3025 (2.3025)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3027 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:19:06 [INFO] codeq: Epoch 55 — loss=2.3473  train_acc=9.70  val_acc=10.00
+2026-02-27 14:19:06 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:19:06 [INFO] codeq: Epoch 56/100 — lr=4.21783e-04
+Epoch: [55][0/391]	Time 0.197 (0.197)	Data 0.179 (0.179)	Loss 2.3458 (2.3458)	Prec@1 6.250 (6.250)
+Epoch: [55][50/391]	Time 0.015 (0.020)	Data 0.000 (0.004)	Loss 2.3464 (2.3458)	Prec@1 8.594 (8.869)
+Epoch: [55][100/391]	Time 0.017 (0.018)	Data 0.000 (0.002)	Loss 2.3484 (2.3456)	Prec@1 7.812 (9.143)
+Epoch: [55][150/391]	Time 0.017 (0.018)	Data 0.000 (0.002)	Loss 2.3438 (2.3455)	Prec@1 11.719 (9.437)
+Epoch: [55][200/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3445 (2.3456)	Prec@1 6.250 (9.488)
+Epoch: [55][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3519 (2.3458)	Prec@1 9.375 (9.618)
+Epoch: [55][300/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3521 (2.3468)	Prec@1 9.375 (9.650)
+Epoch: [55][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3507 (2.3475)	Prec@1 6.250 (9.611)
+Test: [0/79]	Time 0.117 (0.117)	Loss 2.3026 (2.3026)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3025 (2.3026)	Prec@1 13.281 (10.386)
+ * Prec@1 10.000
+2026-02-27 14:19:13 [INFO] codeq: Epoch 56 — loss=2.3476  train_acc=9.60  val_acc=10.00
+2026-02-27 14:19:13 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:19:13 [INFO] codeq: Epoch 57/100 — lr=4.06309e-04
+Epoch: [56][0/391]	Time 0.195 (0.195)	Data 0.168 (0.168)	Loss 2.3479 (2.3479)	Prec@1 15.625 (15.625)
+Epoch: [56][50/391]	Time 0.016 (0.020)	Data 0.000 (0.004)	Loss 2.3471 (2.3480)	Prec@1 14.062 (10.585)
+Epoch: [56][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3456 (2.3470)	Prec@1 12.500 (10.458)
+Epoch: [56][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3457 (2.3465)	Prec@1 7.812 (10.451)
+Epoch: [56][200/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3439 (2.3461)	Prec@1 12.500 (10.428)
+Epoch: [56][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3442 (2.3460)	Prec@1 10.156 (10.240)
+Epoch: [56][300/391]	Time 0.018 (0.017)	Data 0.000 (0.001)	Loss 2.3426 (2.3456)	Prec@1 7.031 (10.071)
+Epoch: [56][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3435 (2.3453)	Prec@1 9.375 (9.887)
+Test: [0/79]	Time 0.121 (0.121)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.156)
+Test: [50/79]	Time 0.005 (0.011)	Loss 2.3028 (2.3026)	Prec@1 10.938 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:19:21 [INFO] codeq: Epoch 57 — loss=2.3451  train_acc=9.85  val_acc=10.00
+2026-02-27 14:19:21 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:19:21 [INFO] codeq: Epoch 58/100 — lr=3.90928e-04
+Epoch: [57][0/391]	Time 0.178 (0.178)	Data 0.160 (0.160)	Loss 2.3433 (2.3433)	Prec@1 6.250 (6.250)
+Epoch: [57][50/391]	Time 0.022 (0.021)	Data 0.000 (0.004)	Loss 2.3627 (2.3488)	Prec@1 10.938 (10.049)
+Epoch: [57][100/391]	Time 0.015 (0.019)	Data 0.000 (0.002)	Loss 2.3765 (2.3622)	Prec@1 3.125 (9.955)
+Epoch: [57][150/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3712 (2.3661)	Prec@1 3.906 (9.830)
+Epoch: [57][200/391]	Time 0.020 (0.019)	Data 0.000 (0.001)	Loss 2.3682 (2.3670)	Prec@1 13.281 (9.849)
+Epoch: [57][250/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3648 (2.3669)	Prec@1 9.375 (9.686)
+Epoch: [57][300/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3609 (2.3662)	Prec@1 7.812 (9.707)
+Epoch: [57][350/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.3581 (2.3652)	Prec@1 10.938 (9.647)
+Test: [0/79]	Time 0.105 (0.105)	Loss 2.3027 (2.3027)	Prec@1 10.156 (10.156)
+Test: [50/79]	Time 0.006 (0.010)	Loss 2.3027 (2.3026)	Prec@1 10.938 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:19:29 [INFO] codeq: Epoch 58 — loss=2.3644  train_acc=9.59  val_acc=10.00
+2026-02-27 14:19:29 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:19:29 [INFO] codeq: Epoch 59/100 — lr=3.75655e-04
+Epoch: [58][0/391]	Time 0.190 (0.190)	Data 0.171 (0.171)	Loss 2.3577 (2.3577)	Prec@1 7.812 (7.812)
+Epoch: [58][50/391]	Time 0.017 (0.020)	Data 0.000 (0.004)	Loss 2.3530 (2.3544)	Prec@1 11.719 (9.926)
+Epoch: [58][100/391]	Time 0.017 (0.018)	Data 0.000 (0.002)	Loss 2.3520 (2.3531)	Prec@1 7.812 (9.947)
+Epoch: [58][150/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3492 (2.3521)	Prec@1 8.594 (10.110)
+Epoch: [58][200/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3470 (2.3511)	Prec@1 7.812 (10.012)
+Epoch: [58][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3453 (2.3501)	Prec@1 10.938 (9.935)
+Epoch: [58][300/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3451 (2.3492)	Prec@1 10.938 (9.884)
+Epoch: [58][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3430 (2.3484)	Prec@1 10.156 (9.885)
+Test: [0/79]	Time 0.128 (0.128)	Loss 2.3028 (2.3028)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3027 (2.3026)	Prec@1 6.250 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:19:36 [INFO] codeq: Epoch 59 — loss=2.3479  train_acc=9.83  val_acc=10.00
+2026-02-27 14:19:36 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:19:36 [INFO] codeq: Epoch 60/100 — lr=3.60504e-04
+Epoch: [59][0/391]	Time 0.180 (0.180)	Data 0.156 (0.156)	Loss 2.3451 (2.3451)	Prec@1 8.594 (8.594)
+Epoch: [59][50/391]	Time 0.016 (0.020)	Data 0.000 (0.004)	Loss 2.3505 (2.3438)	Prec@1 12.500 (10.156)
+Epoch: [59][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3418 (2.3441)	Prec@1 4.688 (9.870)
+Epoch: [59][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3403 (2.3432)	Prec@1 5.469 (9.949)
+Epoch: [59][200/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3420 (2.3428)	Prec@1 9.375 (9.962)
+Epoch: [59][250/391]	Time 0.018 (0.017)	Data 0.000 (0.001)	Loss 2.3464 (2.3426)	Prec@1 6.250 (9.861)
+Epoch: [59][300/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3399 (2.3426)	Prec@1 7.812 (9.917)
+Epoch: [59][350/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3476 (2.3423)	Prec@1 10.938 (9.876)
+Test: [0/79]	Time 0.126 (0.126)	Loss 2.3027 (2.3027)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3027 (2.3026)	Prec@1 6.250 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:19:43 [INFO] codeq: Epoch 60 — loss=2.3424  train_acc=9.84  val_acc=10.00
+2026-02-27 14:19:43 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:19:43 [INFO] codeq: Epoch 61/100 — lr=3.45492e-04
+Epoch: [60][0/391]	Time 0.176 (0.176)	Data 0.157 (0.157)	Loss 2.3404 (2.3404)	Prec@1 6.250 (6.250)
+Epoch: [60][50/391]	Time 0.015 (0.020)	Data 0.000 (0.004)	Loss 2.3542 (2.3489)	Prec@1 7.812 (9.697)
+Epoch: [60][100/391]	Time 0.015 (0.018)	Data 0.000 (0.002)	Loss 2.3513 (2.3509)	Prec@1 10.938 (9.468)
+Epoch: [60][150/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3479 (2.3505)	Prec@1 10.938 (9.478)
+Epoch: [60][200/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3463 (2.3497)	Prec@1 9.375 (9.624)
+Epoch: [60][250/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3440 (2.3488)	Prec@1 11.719 (9.699)
+Epoch: [60][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3421 (2.3479)	Prec@1 7.812 (9.728)
+Epoch: [60][350/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3407 (2.3470)	Prec@1 12.500 (9.709)
+Test: [0/79]	Time 0.096 (0.096)	Loss 2.3027 (2.3027)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3026 (2.3026)	Prec@1 10.938 (9.804)
+ * Prec@1 10.000
+2026-02-27 14:19:50 [INFO] codeq: Epoch 61 — loss=2.3463  train_acc=9.69  val_acc=10.00
+2026-02-27 14:19:50 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:19:50 [INFO] codeq: Epoch 62/100 — lr=3.30631e-04
+Epoch: [61][0/391]	Time 0.207 (0.207)	Data 0.188 (0.188)	Loss 2.3412 (2.3412)	Prec@1 10.156 (10.156)
+Epoch: [61][50/391]	Time 0.017 (0.020)	Data 0.000 (0.004)	Loss 2.3430 (2.3479)	Prec@1 10.938 (9.804)
+Epoch: [61][100/391]	Time 0.015 (0.018)	Data 0.000 (0.002)	Loss 2.3396 (2.3445)	Prec@1 6.250 (9.932)
+Epoch: [61][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3409 (2.3439)	Prec@1 10.938 (9.856)
+Epoch: [61][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3406 (2.3430)	Prec@1 10.156 (9.873)
+Epoch: [61][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3382 (2.3422)	Prec@1 7.031 (9.833)
+Epoch: [61][300/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3380 (2.3417)	Prec@1 9.375 (9.889)
+Epoch: [61][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3415 (2.3412)	Prec@1 5.469 (9.856)
+Test: [0/79]	Time 0.119 (0.119)	Loss 2.3028 (2.3028)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.938 (9.804)
+ * Prec@1 10.000
+2026-02-27 14:19:58 [INFO] codeq: Epoch 62 — loss=2.3410  train_acc=9.82  val_acc=10.00
+2026-02-27 14:19:58 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:19:58 [INFO] codeq: Epoch 63/100 — lr=3.15938e-04
+Epoch: [62][0/391]	Time 0.187 (0.187)	Data 0.168 (0.168)	Loss 2.3379 (2.3379)	Prec@1 12.500 (12.500)
+Epoch: [62][50/391]	Time 0.015 (0.020)	Data 0.000 (0.004)	Loss 2.3385 (2.3419)	Prec@1 9.375 (10.340)
+Epoch: [62][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3374 (2.3398)	Prec@1 7.812 (10.025)
+Epoch: [62][150/391]	Time 0.021 (0.018)	Data 0.000 (0.001)	Loss 2.3366 (2.3390)	Prec@1 12.500 (10.063)
+Epoch: [62][200/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3359 (2.3387)	Prec@1 11.719 (10.016)
+Epoch: [62][250/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3412 (2.3385)	Prec@1 9.375 (9.917)
+Epoch: [62][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3370 (2.3384)	Prec@1 7.031 (9.821)
+Epoch: [62][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3365 (2.3383)	Prec@1 10.938 (9.805)
+Test: [0/79]	Time 0.132 (0.132)	Loss 2.3027 (2.3027)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.006 (0.010)	Loss 2.3026 (2.3026)	Prec@1 13.281 (10.386)
+ * Prec@1 10.000
+2026-02-27 14:20:05 [INFO] codeq: Epoch 63 — loss=2.3381  train_acc=9.76  val_acc=10.00
+2026-02-27 14:20:05 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:20:05 [INFO] codeq: Epoch 64/100 — lr=3.01426e-04
+Epoch: [63][0/391]	Time 0.180 (0.180)	Data 0.159 (0.159)	Loss 2.3353 (2.3353)	Prec@1 13.281 (13.281)
+Epoch: [63][50/391]	Time 0.016 (0.020)	Data 0.000 (0.003)	Loss 2.3463 (2.3378)	Prec@1 10.156 (9.758)
+Epoch: [63][100/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3360 (2.3391)	Prec@1 14.062 (9.862)
+Epoch: [63][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3367 (2.3384)	Prec@1 7.812 (9.794)
+Epoch: [63][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3353 (2.3379)	Prec@1 8.594 (9.841)
+Epoch: [63][250/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3494 (2.3375)	Prec@1 7.812 (9.885)
+Epoch: [63][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3410 (2.3382)	Prec@1 10.938 (9.847)
+Epoch: [63][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3384 (2.3384)	Prec@1 12.500 (9.829)
+Test: [0/79]	Time 0.103 (0.103)	Loss 2.3027 (2.3027)	Prec@1 7.812 (7.812)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3027 (2.3026)	Prec@1 10.938 (9.804)
+ * Prec@1 10.000
+2026-02-27 14:20:13 [INFO] codeq: Epoch 64 — loss=2.3383  train_acc=9.78  val_acc=10.00
+2026-02-27 14:20:13 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:20:13 [INFO] codeq: Epoch 65/100 — lr=2.87110e-04
+Epoch: [64][0/391]	Time 0.177 (0.177)	Data 0.156 (0.156)	Loss 2.3364 (2.3364)	Prec@1 4.688 (4.688)
+Epoch: [64][50/391]	Time 0.018 (0.024)	Data 0.000 (0.007)	Loss 2.3385 (2.3393)	Prec@1 10.156 (10.095)
+Epoch: [64][100/391]	Time 0.017 (0.020)	Data 0.000 (0.004)	Loss 2.3367 (2.3382)	Prec@1 10.938 (10.195)
+Epoch: [64][150/391]	Time 0.017 (0.019)	Data 0.000 (0.003)	Loss 2.3360 (2.3377)	Prec@1 8.594 (10.032)
+Epoch: [64][200/391]	Time 0.017 (0.018)	Data 0.000 (0.002)	Loss 2.3350 (2.3376)	Prec@1 10.938 (10.137)
+Epoch: [64][250/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3482 (2.3391)	Prec@1 8.594 (10.010)
+Epoch: [64][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3383 (2.3396)	Prec@1 14.062 (9.889)
+Epoch: [64][350/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3339 (2.3391)	Prec@1 7.812 (9.896)
+Test: [0/79]	Time 0.100 (0.100)	Loss 2.3025 (2.3025)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.006 (0.012)	Loss 2.3026 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:20:21 [INFO] codeq: Epoch 65 — loss=2.3392  train_acc=9.85  val_acc=10.00
+2026-02-27 14:20:21 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:20:21 [INFO] codeq: Epoch 66/100 — lr=2.73005e-04
+Epoch: [65][0/391]	Time 0.163 (0.163)	Data 0.141 (0.141)	Loss 2.3503 (2.3503)	Prec@1 14.062 (14.062)
+Epoch: [65][50/391]	Time 0.017 (0.020)	Data 0.000 (0.003)	Loss 2.3370 (2.3414)	Prec@1 9.375 (9.436)
+Epoch: [65][100/391]	Time 0.018 (0.018)	Data 0.000 (0.002)	Loss 2.3369 (2.3382)	Prec@1 7.812 (9.383)
+Epoch: [65][150/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3387 (2.3372)	Prec@1 13.281 (9.566)
+Epoch: [65][200/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3326 (2.3368)	Prec@1 12.500 (9.565)
+Epoch: [65][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3333 (2.3362)	Prec@1 5.469 (9.636)
+Epoch: [65][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3408 (2.3377)	Prec@1 8.594 (9.635)
+Epoch: [65][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3352 (2.3376)	Prec@1 7.812 (9.593)
+Test: [0/79]	Time 0.095 (0.095)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:20:28 [INFO] codeq: Epoch 66 — loss=2.3372  train_acc=9.57  val_acc=10.00
+2026-02-27 14:20:28 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:20:28 [INFO] codeq: Epoch 67/100 — lr=2.59123e-04
+Epoch: [66][0/391]	Time 0.194 (0.194)	Data 0.173 (0.173)	Loss 2.3332 (2.3332)	Prec@1 5.469 (5.469)
+Epoch: [66][50/391]	Time 0.017 (0.022)	Data 0.000 (0.004)	Loss 2.3427 (2.3552)	Prec@1 13.281 (9.835)
+Epoch: [66][100/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3360 (2.3470)	Prec@1 8.594 (9.924)
+Epoch: [66][150/391]	Time 0.016 (0.019)	Data 0.000 (0.001)	Loss 2.3329 (2.3428)	Prec@1 10.156 (9.877)
+Epoch: [66][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3320 (2.3402)	Prec@1 7.812 (9.888)
+Epoch: [66][250/391]	Time 0.019 (0.018)	Data 0.000 (0.001)	Loss 2.3376 (2.3389)	Prec@1 7.812 (9.904)
+Epoch: [66][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3375 (2.3388)	Prec@1 13.281 (9.928)
+Epoch: [66][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3348 (2.3384)	Prec@1 3.906 (9.929)
+Test: [0/79]	Time 0.133 (0.133)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.156)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3025 (2.3026)	Prec@1 10.156 (10.202)
+ * Prec@1 10.000
+2026-02-27 14:20:36 [INFO] codeq: Epoch 67 — loss=2.3379  train_acc=9.86  val_acc=10.00
+2026-02-27 14:20:36 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:20:36 [INFO] codeq: Epoch 68/100 — lr=2.45479e-04
+Epoch: [67][0/391]	Time 0.179 (0.179)	Data 0.159 (0.159)	Loss 2.3325 (2.3325)	Prec@1 9.375 (9.375)
+Epoch: [67][50/391]	Time 0.018 (0.020)	Data 0.000 (0.003)	Loss 2.3351 (2.3346)	Prec@1 10.938 (10.524)
+Epoch: [67][100/391]	Time 0.015 (0.018)	Data 0.000 (0.002)	Loss 2.3360 (2.3356)	Prec@1 10.938 (10.125)
+Epoch: [67][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3493 (2.3350)	Prec@1 10.156 (9.986)
+Epoch: [67][200/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.3343 (2.3358)	Prec@1 10.156 (9.900)
+Epoch: [67][250/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3388 (2.3357)	Prec@1 7.812 (9.795)
+Epoch: [67][300/391]	Time 0.018 (0.017)	Data 0.000 (0.001)	Loss 2.3315 (2.3354)	Prec@1 13.281 (9.840)
+Epoch: [67][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3347 (2.3350)	Prec@1 7.031 (9.896)
+Test: [0/79]	Time 0.131 (0.131)	Loss 2.3026 (2.3026)	Prec@1 13.281 (13.281)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3025 (2.3026)	Prec@1 15.625 (9.773)
+ * Prec@1 10.000
+2026-02-27 14:20:43 [INFO] codeq: Epoch 68 — loss=2.3348  train_acc=9.76  val_acc=10.00
+2026-02-27 14:20:43 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:20:43 [INFO] codeq: Epoch 69/100 — lr=2.32087e-04
+Epoch: [68][0/391]	Time 0.178 (0.178)	Data 0.157 (0.157)	Loss 2.3331 (2.3331)	Prec@1 12.500 (12.500)
+Epoch: [68][50/391]	Time 0.018 (0.020)	Data 0.000 (0.003)	Loss 2.3414 (2.3395)	Prec@1 9.375 (10.187)
+Epoch: [68][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3326 (2.3376)	Prec@1 10.938 (9.955)
+Epoch: [68][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3365 (2.3360)	Prec@1 12.500 (9.820)
+Epoch: [68][200/391]	Time 0.021 (0.018)	Data 0.000 (0.001)	Loss 2.3300 (2.3351)	Prec@1 11.719 (9.764)
+Epoch: [68][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3340 (2.3356)	Prec@1 7.812 (9.752)
+Epoch: [68][300/391]	Time 0.022 (0.018)	Data 0.000 (0.001)	Loss 2.3297 (2.3349)	Prec@1 12.500 (9.770)
+Epoch: [68][350/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3302 (2.3347)	Prec@1 9.375 (9.707)
+Test: [0/79]	Time 0.099 (0.099)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 6.250 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:20:51 [INFO] codeq: Epoch 69 — loss=2.3345  train_acc=9.66  val_acc=10.00
+2026-02-27 14:20:51 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:20:51 [INFO] codeq: Epoch 70/100 — lr=2.18958e-04
+Epoch: [69][0/391]	Time 0.189 (0.189)	Data 0.171 (0.171)	Loss 2.3350 (2.3350)	Prec@1 9.375 (9.375)
+Epoch: [69][50/391]	Time 0.016 (0.021)	Data 0.000 (0.004)	Loss 2.3315 (2.3314)	Prec@1 9.375 (10.233)
+Epoch: [69][100/391]	Time 0.020 (0.019)	Data 0.000 (0.002)	Loss 2.3318 (2.3314)	Prec@1 8.594 (10.087)
+Epoch: [69][150/391]	Time 0.016 (0.019)	Data 0.000 (0.001)	Loss 2.3349 (2.3320)	Prec@1 10.156 (10.048)
+Epoch: [69][200/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3288 (2.3318)	Prec@1 11.719 (9.935)
+Epoch: [69][250/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3327 (2.3318)	Prec@1 9.375 (9.836)
+Epoch: [69][300/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3304 (2.3315)	Prec@1 10.938 (9.910)
+Epoch: [69][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3310 (2.3312)	Prec@1 15.625 (9.829)
+Test: [0/79]	Time 0.112 (0.112)	Loss 2.3026 (2.3026)	Prec@1 14.844 (14.844)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.938 (9.942)
+ * Prec@1 10.000
+2026-02-27 14:20:59 [INFO] codeq: Epoch 70 — loss=2.3311  train_acc=9.73  val_acc=10.00
+2026-02-27 14:20:59 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:20:59 [INFO] codeq: Epoch 71/100 — lr=2.06107e-04
+Epoch: [70][0/391]	Time 0.190 (0.190)	Data 0.169 (0.169)	Loss 2.3308 (2.3308)	Prec@1 7.031 (7.031)
+Epoch: [70][50/391]	Time 0.020 (0.021)	Data 0.000 (0.004)	Loss 2.3348 (2.3381)	Prec@1 10.938 (10.340)
+Epoch: [70][100/391]	Time 0.018 (0.019)	Data 0.000 (0.002)	Loss 2.3285 (2.3346)	Prec@1 14.062 (9.994)
+Epoch: [70][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3313 (2.3337)	Prec@1 10.156 (9.810)
+Epoch: [70][200/391]	Time 0.021 (0.018)	Data 0.000 (0.001)	Loss 2.3354 (2.3328)	Prec@1 8.594 (9.892)
+Epoch: [70][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3289 (2.3326)	Prec@1 5.469 (9.792)
+Epoch: [70][300/391]	Time 0.021 (0.018)	Data 0.000 (0.001)	Loss 2.3362 (2.3320)	Prec@1 13.281 (9.720)
+Epoch: [70][350/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3281 (2.3319)	Prec@1 10.938 (9.778)
+Test: [0/79]	Time 0.139 (0.139)	Loss 2.3026 (2.3026)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.007 (0.011)	Loss 2.3027 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:21:06 [INFO] codeq: Epoch 71 — loss=2.3320  train_acc=9.71  val_acc=10.00
+2026-02-27 14:21:06 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:21:06 [INFO] codeq: Epoch 72/100 — lr=1.93546e-04
+Epoch: [71][0/391]	Time 0.181 (0.181)	Data 0.161 (0.161)	Loss 2.3321 (2.3321)	Prec@1 7.812 (7.812)
+Epoch: [71][50/391]	Time 0.018 (0.020)	Data 0.000 (0.003)	Loss 2.3285 (2.3293)	Prec@1 11.719 (9.574)
+Epoch: [71][100/391]	Time 0.018 (0.019)	Data 0.000 (0.002)	Loss 2.3327 (2.3315)	Prec@1 9.375 (10.056)
+Epoch: [71][150/391]	Time 0.020 (0.019)	Data 0.000 (0.001)	Loss 2.3275 (2.3308)	Prec@1 9.375 (9.980)
+Epoch: [71][200/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.3291 (2.3308)	Prec@1 8.594 (9.958)
+Epoch: [71][250/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3303 (2.3305)	Prec@1 3.906 (9.820)
+Epoch: [71][300/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3311 (2.3302)	Prec@1 7.031 (9.767)
+Epoch: [71][350/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3263 (2.3299)	Prec@1 10.156 (9.787)
+Test: [0/79]	Time 0.134 (0.134)	Loss 2.3025 (2.3025)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3026 (2.3026)	Prec@1 6.250 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:21:14 [INFO] codeq: Epoch 72 — loss=2.3298  train_acc=9.73  val_acc=10.00
+2026-02-27 14:21:14 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:21:14 [INFO] codeq: Epoch 73/100 — lr=1.81288e-04
+Epoch: [72][0/391]	Time 0.180 (0.180)	Data 0.159 (0.159)	Loss 2.3305 (2.3305)	Prec@1 7.812 (7.812)
+Epoch: [72][50/391]	Time 0.017 (0.022)	Data 0.000 (0.003)	Loss 2.3378 (2.3384)	Prec@1 11.719 (9.268)
+Epoch: [72][100/391]	Time 0.016 (0.021)	Data 0.000 (0.002)	Loss 2.3301 (2.3358)	Prec@1 12.500 (9.746)
+Epoch: [72][150/391]	Time 0.016 (0.020)	Data 0.000 (0.001)	Loss 2.3267 (2.3333)	Prec@1 9.375 (9.722)
+Epoch: [72][200/391]	Time 0.020 (0.019)	Data 0.000 (0.001)	Loss 2.3410 (2.3330)	Prec@1 4.688 (9.923)
+Epoch: [72][250/391]	Time 0.021 (0.019)	Data 0.000 (0.001)	Loss 2.3297 (2.3332)	Prec@1 7.031 (9.892)
+Epoch: [72][300/391]	Time 0.019 (0.019)	Data 0.000 (0.001)	Loss 2.3255 (2.3323)	Prec@1 9.375 (9.886)
+Epoch: [72][350/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.3267 (2.3313)	Prec@1 9.375 (9.807)
+Test: [0/79]	Time 0.105 (0.105)	Loss 2.3025 (2.3025)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.007 (0.008)	Loss 2.3027 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:21:22 [INFO] codeq: Epoch 73 — loss=2.3309  train_acc=9.73  val_acc=10.00
+2026-02-27 14:21:22 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:21:22 [INFO] codeq: Epoch 74/100 — lr=1.69344e-04
+Epoch: [73][0/391]	Time 0.173 (0.173)	Data 0.150 (0.150)	Loss 2.3290 (2.3290)	Prec@1 11.719 (11.719)
+Epoch: [73][50/391]	Time 0.016 (0.020)	Data 0.000 (0.003)	Loss 2.3328 (2.3319)	Prec@1 14.844 (10.233)
+Epoch: [73][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3271 (2.3308)	Prec@1 8.594 (9.947)
+Epoch: [73][150/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3258 (2.3293)	Prec@1 9.375 (10.094)
+Epoch: [73][200/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3462 (2.3333)	Prec@1 8.594 (10.300)
+Epoch: [73][250/391]	Time 0.019 (0.018)	Data 0.000 (0.001)	Loss 2.3320 (2.3339)	Prec@1 7.031 (10.141)
+Epoch: [73][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3274 (2.3332)	Prec@1 5.469 (10.032)
+Epoch: [73][350/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3244 (2.3321)	Prec@1 9.375 (9.905)
+Test: [0/79]	Time 0.113 (0.113)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3027 (2.3026)	Prec@1 6.250 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:21:30 [INFO] codeq: Epoch 74 — loss=2.3314  train_acc=9.83  val_acc=10.00
+2026-02-27 14:21:30 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:21:30 [INFO] codeq: Epoch 75/100 — lr=1.57726e-04
+Epoch: [74][0/391]	Time 0.173 (0.173)	Data 0.153 (0.153)	Loss 2.3258 (2.3258)	Prec@1 12.500 (12.500)
+Epoch: [74][50/391]	Time 0.017 (0.020)	Data 0.000 (0.003)	Loss 2.3238 (2.3256)	Prec@1 6.250 (10.309)
+Epoch: [74][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3247 (2.3266)	Prec@1 7.812 (10.110)
+Epoch: [74][150/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3278 (2.3261)	Prec@1 14.062 (10.084)
+Epoch: [74][200/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3311 (2.3260)	Prec@1 10.156 (9.989)
+Epoch: [74][250/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3252 (2.3263)	Prec@1 13.281 (10.097)
+Epoch: [74][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3273 (2.3263)	Prec@1 10.156 (10.042)
+Epoch: [74][350/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3229 (2.3261)	Prec@1 7.031 (9.920)
+Test: [0/79]	Time 0.107 (0.107)	Loss 2.3026 (2.3026)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.005 (0.013)	Loss 2.3026 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:21:37 [INFO] codeq: Epoch 75 — loss=2.3262  train_acc=9.83  val_acc=10.00
+2026-02-27 14:21:37 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:21:37 [INFO] codeq: Epoch 76/100 — lr=1.46447e-04
+Epoch: [75][0/391]	Time 0.193 (0.193)	Data 0.173 (0.173)	Loss 2.3250 (2.3250)	Prec@1 6.250 (6.250)
+Epoch: [75][50/391]	Time 0.015 (0.021)	Data 0.000 (0.005)	Loss 2.3266 (2.3284)	Prec@1 8.594 (10.233)
+Epoch: [75][100/391]	Time 0.017 (0.019)	Data 0.000 (0.003)	Loss 2.3226 (2.3264)	Prec@1 9.375 (9.793)
+Epoch: [75][150/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3266 (2.3269)	Prec@1 10.938 (9.975)
+Epoch: [75][200/391]	Time 0.018 (0.019)	Data 0.000 (0.001)	Loss 2.3249 (2.3265)	Prec@1 7.031 (10.071)
+Epoch: [75][250/391]	Time 0.016 (0.019)	Data 0.000 (0.001)	Loss 2.3254 (2.3263)	Prec@1 12.500 (9.923)
+Epoch: [75][300/391]	Time 0.019 (0.019)	Data 0.000 (0.001)	Loss 2.3281 (2.3259)	Prec@1 9.375 (9.917)
+Epoch: [75][350/391]	Time 0.016 (0.019)	Data 0.000 (0.001)	Loss 2.3228 (2.3257)	Prec@1 7.031 (9.903)
+Test: [0/79]	Time 0.123 (0.123)	Loss 2.3025 (2.3025)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3026 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:21:45 [INFO] codeq: Epoch 76 — loss=2.3258  train_acc=9.81  val_acc=10.00
+2026-02-27 14:21:45 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:21:45 [INFO] codeq: Epoch 77/100 — lr=1.35516e-04
+Epoch: [76][0/391]	Time 0.186 (0.186)	Data 0.168 (0.168)	Loss 2.3239 (2.3239)	Prec@1 9.375 (9.375)
+Epoch: [76][50/391]	Time 0.016 (0.020)	Data 0.000 (0.003)	Loss 2.3382 (2.3241)	Prec@1 8.594 (9.329)
+Epoch: [76][100/391]	Time 0.015 (0.018)	Data 0.000 (0.002)	Loss 2.3236 (2.3257)	Prec@1 9.375 (9.893)
+Epoch: [76][150/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3221 (2.3246)	Prec@1 8.594 (9.872)
+Epoch: [76][200/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3236 (2.3240)	Prec@1 7.812 (9.985)
+Epoch: [76][250/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3263 (2.3241)	Prec@1 6.250 (9.895)
+Epoch: [76][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3255 (2.3239)	Prec@1 9.375 (9.811)
+Epoch: [76][350/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3233 (2.3238)	Prec@1 8.594 (9.693)
+Test: [0/79]	Time 0.101 (0.101)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.156)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.202)
+ * Prec@1 10.000
+2026-02-27 14:21:53 [INFO] codeq: Epoch 77 — loss=2.3236  train_acc=9.56  val_acc=10.00
+2026-02-27 14:21:53 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:21:53 [INFO] codeq: Epoch 78/100 — lr=1.24944e-04
+Epoch: [77][0/391]	Time 0.194 (0.194)	Data 0.173 (0.173)	Loss 2.3216 (2.3216)	Prec@1 10.938 (10.938)
+Epoch: [77][50/391]	Time 0.015 (0.020)	Data 0.000 (0.004)	Loss 2.3329 (2.3486)	Prec@1 9.375 (9.482)
+Epoch: [77][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3266 (2.3391)	Prec@1 10.938 (9.893)
+Epoch: [77][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3223 (2.3343)	Prec@1 11.719 (9.877)
+Epoch: [77][200/391]	Time 0.021 (0.018)	Data 0.000 (0.001)	Loss 2.3205 (2.3311)	Prec@1 6.250 (9.814)
+Epoch: [77][250/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3199 (2.3291)	Prec@1 4.688 (9.864)
+Epoch: [77][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3207 (2.3280)	Prec@1 8.594 (9.832)
+Epoch: [77][350/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3210 (2.3271)	Prec@1 8.594 (9.771)
+Test: [0/79]	Time 0.119 (0.119)	Loss 2.3026 (2.3026)	Prec@1 11.719 (11.719)
+Test: [50/79]	Time 0.005 (0.009)	Loss 2.3026 (2.3026)	Prec@1 7.031 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:22:00 [INFO] codeq: Epoch 78 — loss=2.3265  train_acc=9.72  val_acc=10.00
+2026-02-27 14:22:00 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:22:00 [INFO] codeq: Epoch 79/100 — lr=1.14743e-04
+Epoch: [78][0/391]	Time 0.234 (0.234)	Data 0.211 (0.211)	Loss 2.3213 (2.3213)	Prec@1 9.375 (9.375)
+Epoch: [78][50/391]	Time 0.017 (0.022)	Data 0.000 (0.004)	Loss 2.3200 (2.3211)	Prec@1 10.938 (10.018)
+Epoch: [78][100/391]	Time 0.017 (0.020)	Data 0.000 (0.002)	Loss 2.3208 (2.3212)	Prec@1 12.500 (10.048)
+Epoch: [78][150/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3232 (2.3223)	Prec@1 6.250 (9.965)
+Epoch: [78][200/391]	Time 0.023 (0.019)	Data 0.000 (0.001)	Loss 2.3299 (2.3220)	Prec@1 5.469 (9.880)
+Epoch: [78][250/391]	Time 0.019 (0.019)	Data 0.000 (0.001)	Loss 2.3216 (2.3227)	Prec@1 6.250 (9.932)
+Epoch: [78][300/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.3271 (2.3225)	Prec@1 11.719 (9.811)
+Epoch: [78][350/391]	Time 0.014 (0.019)	Data 0.000 (0.001)	Loss 2.3202 (2.3225)	Prec@1 8.594 (9.771)
+Test: [0/79]	Time 0.113 (0.113)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:22:08 [INFO] codeq: Epoch 79 — loss=2.3222  train_acc=9.78  val_acc=10.00
+2026-02-27 14:22:09 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:22:09 [INFO] codeq: Epoch 80/100 — lr=1.04922e-04
+Epoch: [79][0/391]	Time 0.190 (0.190)	Data 0.167 (0.167)	Loss 2.3193 (2.3193)	Prec@1 10.156 (10.156)
+Epoch: [79][50/391]	Time 0.018 (0.026)	Data 0.000 (0.008)	Loss 2.3338 (2.3491)	Prec@1 9.375 (10.110)
+Epoch: [79][100/391]	Time 0.017 (0.022)	Data 0.000 (0.004)	Loss 2.3255 (2.3392)	Prec@1 7.812 (9.653)
+Epoch: [79][150/391]	Time 0.017 (0.020)	Data 0.000 (0.003)	Loss 2.3218 (2.3340)	Prec@1 14.062 (9.830)
+Epoch: [79][200/391]	Time 0.018 (0.020)	Data 0.000 (0.002)	Loss 2.3193 (2.3307)	Prec@1 10.156 (9.768)
+Epoch: [79][250/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3185 (2.3283)	Prec@1 5.469 (9.811)
+Epoch: [79][300/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3196 (2.3272)	Prec@1 8.594 (9.808)
+Epoch: [79][350/391]	Time 0.018 (0.019)	Data 0.000 (0.001)	Loss 2.3185 (2.3261)	Prec@1 13.281 (9.693)
+Test: [0/79]	Time 0.125 (0.125)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 6.250 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:22:17 [INFO] codeq: Epoch 80 — loss=2.3253  train_acc=9.65  val_acc=10.00
+2026-02-27 14:22:17 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:22:17 [INFO] codeq: Epoch 81/100 — lr=9.54915e-05
+Epoch: [80][0/391]	Time 0.230 (0.230)	Data 0.206 (0.206)	Loss 2.3206 (2.3206)	Prec@1 9.375 (9.375)
+Epoch: [80][50/391]	Time 0.018 (0.022)	Data 0.000 (0.004)	Loss 2.3225 (2.3228)	Prec@1 10.156 (9.804)
+Epoch: [80][100/391]	Time 0.018 (0.020)	Data 0.000 (0.002)	Loss 2.3316 (2.3219)	Prec@1 3.906 (9.777)
+Epoch: [80][150/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3198 (2.3223)	Prec@1 6.250 (9.670)
+Epoch: [80][200/391]	Time 0.020 (0.019)	Data 0.000 (0.001)	Loss 2.3189 (2.3213)	Prec@1 9.375 (9.729)
+Epoch: [80][250/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.3173 (2.3207)	Prec@1 15.625 (9.584)
+Epoch: [80][300/391]	Time 0.016 (0.019)	Data 0.000 (0.001)	Loss 2.3171 (2.3202)	Prec@1 9.375 (9.606)
+Epoch: [80][350/391]	Time 0.019 (0.018)	Data 0.000 (0.001)	Loss 2.3171 (2.3198)	Prec@1 7.031 (9.615)
+Test: [0/79]	Time 0.131 (0.131)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:22:24 [INFO] codeq: Epoch 81 — loss=2.3204  train_acc=9.53  val_acc=10.00
+2026-02-27 14:22:24 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:22:24 [INFO] codeq: Epoch 82/100 — lr=8.64597e-05
+Epoch: [81][0/391]	Time 0.215 (0.215)	Data 0.194 (0.194)	Loss 2.3216 (2.3216)	Prec@1 6.250 (6.250)
+Epoch: [81][50/391]	Time 0.016 (0.020)	Data 0.000 (0.004)	Loss 2.3200 (2.3196)	Prec@1 11.719 (10.034)
+Epoch: [81][100/391]	Time 0.016 (0.018)	Data 0.000 (0.002)	Loss 2.3221 (2.3197)	Prec@1 10.938 (9.947)
+Epoch: [81][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3171 (2.3195)	Prec@1 8.594 (9.856)
+Epoch: [81][200/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3169 (2.3193)	Prec@1 4.688 (9.810)
+Epoch: [81][250/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3187 (2.3197)	Prec@1 7.031 (9.805)
+Epoch: [81][300/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3166 (2.3193)	Prec@1 8.594 (9.715)
+Epoch: [81][350/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3162 (2.3190)	Prec@1 10.938 (9.700)
+Test: [0/79]	Time 0.127 (0.127)	Loss 2.3026 (2.3026)	Prec@1 14.844 (14.844)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.938 (9.942)
+ * Prec@1 10.000
+2026-02-27 14:22:32 [INFO] codeq: Epoch 82 — loss=2.3188  train_acc=9.67  val_acc=10.00
+2026-02-27 14:22:32 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:22:32 [INFO] codeq: Epoch 83/100 — lr=7.78360e-05
+Epoch: [82][0/391]	Time 0.200 (0.200)	Data 0.176 (0.176)	Loss 2.3191 (2.3191)	Prec@1 6.250 (6.250)
+Epoch: [82][50/391]	Time 0.016 (0.021)	Data 0.000 (0.004)	Loss 2.3257 (2.3314)	Prec@1 15.625 (10.080)
+Epoch: [82][100/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3195 (2.3266)	Prec@1 8.594 (9.769)
+Epoch: [82][150/391]	Time 0.019 (0.019)	Data 0.000 (0.001)	Loss 2.3168 (2.3237)	Prec@1 10.938 (9.742)
+Epoch: [82][200/391]	Time 0.018 (0.019)	Data 0.000 (0.001)	Loss 2.3173 (2.3222)	Prec@1 8.594 (9.818)
+Epoch: [82][250/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3178 (2.3213)	Prec@1 10.938 (9.870)
+Epoch: [82][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3161 (2.3206)	Prec@1 16.406 (9.860)
+Epoch: [82][350/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3152 (2.3199)	Prec@1 14.062 (9.820)
+Test: [0/79]	Time 0.103 (0.103)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:22:40 [INFO] codeq: Epoch 83 — loss=2.3199  train_acc=9.76  val_acc=10.00
+2026-02-27 14:22:40 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:22:40 [INFO] codeq: Epoch 84/100 — lr=6.96290e-05
+Epoch: [83][0/391]	Time 0.186 (0.186)	Data 0.162 (0.162)	Loss 2.3179 (2.3179)	Prec@1 10.156 (10.156)
+Epoch: [83][50/391]	Time 0.017 (0.021)	Data 0.000 (0.003)	Loss 2.3168 (2.3187)	Prec@1 11.719 (9.635)
+Epoch: [83][100/391]	Time 0.016 (0.020)	Data 0.000 (0.002)	Loss 2.3154 (2.3173)	Prec@1 13.281 (9.994)
+Epoch: [83][150/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.3166 (2.3174)	Prec@1 10.938 (9.960)
+Epoch: [83][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3149 (2.3169)	Prec@1 8.594 (9.849)
+Epoch: [83][250/391]	Time 0.021 (0.018)	Data 0.000 (0.001)	Loss 2.3164 (2.3167)	Prec@1 7.031 (9.882)
+Epoch: [83][300/391]	Time 0.021 (0.018)	Data 0.000 (0.001)	Loss 2.3150 (2.3165)	Prec@1 9.375 (9.806)
+Epoch: [83][350/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3164 (2.3165)	Prec@1 7.812 (9.782)
+Test: [0/79]	Time 0.115 (0.115)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.009 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:22:48 [INFO] codeq: Epoch 84 — loss=2.3164  train_acc=9.69  val_acc=10.00
+2026-02-27 14:22:48 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:22:48 [INFO] codeq: Epoch 85/100 — lr=6.18467e-05
+Epoch: [84][0/391]	Time 0.199 (0.199)	Data 0.178 (0.178)	Loss 2.3214 (2.3214)	Prec@1 5.469 (5.469)
+Epoch: [84][50/391]	Time 0.018 (0.020)	Data 0.000 (0.004)	Loss 2.3162 (2.3165)	Prec@1 14.844 (9.743)
+Epoch: [84][100/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3144 (2.3158)	Prec@1 7.812 (10.164)
+Epoch: [84][150/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3147 (2.3157)	Prec@1 7.031 (10.079)
+Epoch: [84][200/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3147 (2.3158)	Prec@1 3.906 (9.977)
+Epoch: [84][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3151 (2.3158)	Prec@1 10.938 (10.153)
+Epoch: [84][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3168 (2.3160)	Prec@1 11.719 (10.076)
+Epoch: [84][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3144 (2.3159)	Prec@1 5.469 (9.918)
+Test: [0/79]	Time 0.122 (0.122)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.156)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.938 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:22:55 [INFO] codeq: Epoch 85 — loss=2.3158  train_acc=9.82  val_acc=10.00
+2026-02-27 14:22:55 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:22:55 [INFO] codeq: Epoch 86/100 — lr=5.44967e-05
+Epoch: [85][0/391]	Time 0.187 (0.187)	Data 0.167 (0.167)	Loss 2.3144 (2.3144)	Prec@1 7.812 (7.812)
+Epoch: [85][50/391]	Time 0.021 (0.023)	Data 0.000 (0.004)	Loss 2.3157 (2.3152)	Prec@1 15.625 (9.743)
+Epoch: [85][100/391]	Time 0.019 (0.020)	Data 0.000 (0.002)	Loss 2.3156 (2.3150)	Prec@1 6.250 (9.739)
+Epoch: [85][150/391]	Time 0.018 (0.020)	Data 0.000 (0.001)	Loss 2.3143 (2.3150)	Prec@1 10.938 (9.618)
+Epoch: [85][200/391]	Time 0.017 (0.020)	Data 0.000 (0.001)	Loss 2.3142 (2.3149)	Prec@1 10.938 (9.799)
+Epoch: [85][250/391]	Time 0.016 (0.019)	Data 0.000 (0.001)	Loss 2.3137 (2.3148)	Prec@1 7.812 (9.820)
+Epoch: [85][300/391]	Time 0.019 (0.019)	Data 0.000 (0.001)	Loss 2.3140 (2.3148)	Prec@1 6.250 (9.801)
+Epoch: [85][350/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.3200 (2.3152)	Prec@1 10.938 (9.807)
+Test: [0/79]	Time 0.123 (0.123)	Loss 2.3026 (2.3026)	Prec@1 14.844 (14.844)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.938 (9.942)
+ * Prec@1 10.000
+2026-02-27 14:23:03 [INFO] codeq: Epoch 86 — loss=2.3153  train_acc=9.73  val_acc=10.00
+2026-02-27 14:23:03 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:23:03 [INFO] codeq: Epoch 87/100 — lr=4.75865e-05
+Epoch: [86][0/391]	Time 0.209 (0.209)	Data 0.191 (0.191)	Loss 2.3147 (2.3147)	Prec@1 7.031 (7.031)
+Epoch: [86][50/391]	Time 0.015 (0.022)	Data 0.000 (0.004)	Loss 2.3137 (2.3141)	Prec@1 14.844 (9.620)
+Epoch: [86][100/391]	Time 0.016 (0.020)	Data 0.000 (0.002)	Loss 2.3159 (2.3170)	Prec@1 10.156 (9.847)
+Epoch: [86][150/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3132 (2.3161)	Prec@1 9.375 (9.737)
+Epoch: [86][200/391]	Time 0.018 (0.019)	Data 0.000 (0.001)	Loss 2.3132 (2.3155)	Prec@1 14.844 (9.861)
+Epoch: [86][250/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.3128 (2.3151)	Prec@1 14.844 (9.839)
+Epoch: [86][300/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3138 (2.3149)	Prec@1 5.469 (9.811)
+Epoch: [86][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3143 (2.3146)	Prec@1 13.281 (9.825)
+Test: [0/79]	Time 0.112 (0.112)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 6.250 (9.957)
+ * Prec@1 10.000
+2026-02-27 14:23:11 [INFO] codeq: Epoch 87 — loss=2.3145  train_acc=9.75  val_acc=10.00
+2026-02-27 14:23:11 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:23:11 [INFO] codeq: Epoch 88/100 — lr=4.11227e-05
+Epoch: [87][0/391]	Time 0.164 (0.164)	Data 0.142 (0.142)	Loss 2.3142 (2.3142)	Prec@1 12.500 (12.500)
+Epoch: [87][50/391]	Time 0.021 (0.023)	Data 0.000 (0.003)	Loss 2.3133 (2.3138)	Prec@1 14.844 (9.942)
+Epoch: [87][100/391]	Time 0.016 (0.021)	Data 0.000 (0.002)	Loss 2.3119 (2.3132)	Prec@1 6.250 (9.599)
+Epoch: [87][150/391]	Time 0.017 (0.020)	Data 0.000 (0.001)	Loss 2.3160 (2.3134)	Prec@1 12.500 (9.732)
+Epoch: [87][200/391]	Time 0.022 (0.020)	Data 0.000 (0.001)	Loss 2.3122 (2.3134)	Prec@1 10.156 (9.838)
+Epoch: [87][250/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.3119 (2.3132)	Prec@1 13.281 (9.783)
+Epoch: [87][300/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.3120 (2.3131)	Prec@1 10.156 (9.764)
+Epoch: [87][350/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3125 (2.3130)	Prec@1 8.594 (9.793)
+Test: [0/79]	Time 0.101 (0.101)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:23:19 [INFO] codeq: Epoch 88 — loss=2.3129  train_acc=9.73  val_acc=10.00
+2026-02-27 14:23:19 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:23:19 [INFO] codeq: Epoch 89/100 — lr=3.51118e-05
+Epoch: [88][0/391]	Time 0.169 (0.169)	Data 0.147 (0.147)	Loss 2.3128 (2.3128)	Prec@1 10.156 (10.156)
+Epoch: [88][50/391]	Time 0.018 (0.022)	Data 0.000 (0.003)	Loss 2.3118 (2.3136)	Prec@1 9.375 (10.126)
+Epoch: [88][100/391]	Time 0.018 (0.021)	Data 0.000 (0.002)	Loss 2.3129 (2.3132)	Prec@1 7.031 (9.955)
+Epoch: [88][150/391]	Time 0.017 (0.020)	Data 0.000 (0.001)	Loss 2.3132 (2.3129)	Prec@1 7.031 (10.006)
+Epoch: [88][200/391]	Time 0.018 (0.020)	Data 0.000 (0.001)	Loss 2.3112 (2.3126)	Prec@1 8.594 (9.931)
+Epoch: [88][250/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.3116 (2.3124)	Prec@1 10.938 (9.935)
+Epoch: [88][300/391]	Time 0.021 (0.019)	Data 0.000 (0.001)	Loss 2.3108 (2.3122)	Prec@1 8.594 (9.936)
+Epoch: [88][350/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.3110 (2.3123)	Prec@1 7.812 (9.825)
+Test: [0/79]	Time 0.136 (0.136)	Loss 2.3026 (2.3026)	Prec@1 7.031 (7.031)
+Test: [50/79]	Time 0.006 (0.010)	Loss 2.3026 (2.3026)	Prec@1 4.688 (9.972)
+ * Prec@1 10.000
+2026-02-27 14:23:27 [INFO] codeq: Epoch 89 — loss=2.3122  train_acc=9.80  val_acc=10.00
+2026-02-27 14:23:27 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:23:27 [INFO] codeq: Epoch 90/100 — lr=2.95596e-05
+Epoch: [89][0/391]	Time 0.207 (0.207)	Data 0.187 (0.187)	Loss 2.3110 (2.3110)	Prec@1 12.500 (12.500)
+Epoch: [89][50/391]	Time 0.017 (0.021)	Data 0.000 (0.004)	Loss 2.3132 (2.3130)	Prec@1 7.812 (9.988)
+Epoch: [89][100/391]	Time 0.017 (0.020)	Data 0.000 (0.002)	Loss 2.3107 (2.3121)	Prec@1 10.156 (9.971)
+Epoch: [89][150/391]	Time 0.018 (0.019)	Data 0.000 (0.002)	Loss 2.3109 (2.3118)	Prec@1 12.500 (10.006)
+Epoch: [89][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3109 (2.3116)	Prec@1 13.281 (9.997)
+Epoch: [89][250/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3113 (2.3115)	Prec@1 11.719 (9.960)
+Epoch: [89][300/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3105 (2.3114)	Prec@1 10.938 (9.907)
+Epoch: [89][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3105 (2.3112)	Prec@1 12.500 (9.813)
+Test: [0/79]	Time 0.129 (0.129)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:23:34 [INFO] codeq: Epoch 90 — loss=2.3113  train_acc=9.79  val_acc=10.00
+2026-02-27 14:23:34 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:23:34 [INFO] codeq: Epoch 91/100 — lr=2.44717e-05
+Epoch: [90][0/391]	Time 0.203 (0.203)	Data 0.183 (0.183)	Loss 2.3106 (2.3106)	Prec@1 11.719 (11.719)
+Epoch: [90][50/391]	Time 0.016 (0.020)	Data 0.000 (0.004)	Loss 2.3116 (2.3147)	Prec@1 10.938 (9.865)
+Epoch: [90][100/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3105 (2.3126)	Prec@1 10.156 (9.978)
+Epoch: [90][150/391]	Time 0.020 (0.018)	Data 0.000 (0.001)	Loss 2.3100 (2.3119)	Prec@1 7.031 (9.815)
+Epoch: [90][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3100 (2.3114)	Prec@1 12.500 (9.888)
+Epoch: [90][250/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3096 (2.3111)	Prec@1 8.594 (9.873)
+Epoch: [90][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3099 (2.3109)	Prec@1 8.594 (9.850)
+Epoch: [90][350/391]	Time 0.018 (0.017)	Data 0.000 (0.001)	Loss 2.3106 (2.3108)	Prec@1 10.938 (9.811)
+Test: [0/79]	Time 0.118 (0.118)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:23:42 [INFO] codeq: Epoch 91 — loss=2.3107  train_acc=9.80  val_acc=10.00
+2026-02-27 14:23:42 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:23:42 [INFO] codeq: Epoch 92/100 — lr=1.98532e-05
+Epoch: [91][0/391]	Time 0.200 (0.200)	Data 0.180 (0.180)	Loss 2.3093 (2.3093)	Prec@1 10.938 (10.938)
+Epoch: [91][50/391]	Time 0.016 (0.029)	Data 0.000 (0.013)	Loss 2.3108 (2.3139)	Prec@1 14.844 (9.574)
+Epoch: [91][100/391]	Time 0.017 (0.023)	Data 0.000 (0.007)	Loss 2.3101 (2.3119)	Prec@1 9.375 (9.978)
+Epoch: [91][150/391]	Time 0.017 (0.021)	Data 0.000 (0.004)	Loss 2.3109 (2.3110)	Prec@1 14.844 (10.068)
+Epoch: [91][200/391]	Time 0.018 (0.020)	Data 0.000 (0.003)	Loss 2.3089 (2.3106)	Prec@1 7.812 (9.985)
+Epoch: [91][250/391]	Time 0.016 (0.019)	Data 0.000 (0.003)	Loss 2.3094 (2.3104)	Prec@1 7.031 (9.898)
+Epoch: [91][300/391]	Time 0.016 (0.019)	Data 0.000 (0.002)	Loss 2.3088 (2.3101)	Prec@1 7.812 (9.866)
+Epoch: [91][350/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3089 (2.3100)	Prec@1 5.469 (9.876)
+Test: [0/79]	Time 0.142 (0.142)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.005 (0.009)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:23:50 [INFO] codeq: Epoch 92 — loss=2.3099  train_acc=9.84  val_acc=10.00
+2026-02-27 14:23:50 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:23:50 [INFO] codeq: Epoch 93/100 — lr=1.57084e-05
+Epoch: [92][0/391]	Time 0.183 (0.183)	Data 0.158 (0.158)	Loss 2.3093 (2.3093)	Prec@1 8.594 (8.594)
+Epoch: [92][50/391]	Time 0.016 (0.021)	Data 0.000 (0.003)	Loss 2.3083 (2.3088)	Prec@1 10.938 (10.187)
+Epoch: [92][100/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3082 (2.3087)	Prec@1 9.375 (10.265)
+Epoch: [92][150/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3081 (2.3087)	Prec@1 10.156 (10.120)
+Epoch: [92][200/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3081 (2.3086)	Prec@1 7.812 (10.044)
+Epoch: [92][250/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3078 (2.3085)	Prec@1 7.812 (9.873)
+Epoch: [92][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3077 (2.3084)	Prec@1 11.719 (9.871)
+Epoch: [92][350/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3078 (2.3084)	Prec@1 10.156 (9.954)
+Test: [0/79]	Time 0.091 (0.091)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:23:57 [INFO] codeq: Epoch 93 — loss=2.3083  train_acc=9.83  val_acc=10.00
+2026-02-27 14:23:57 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:23:57 [INFO] codeq: Epoch 94/100 — lr=1.20416e-05
+Epoch: [93][0/391]	Time 0.162 (0.162)	Data 0.142 (0.142)	Loss 2.3084 (2.3084)	Prec@1 12.500 (12.500)
+Epoch: [93][50/391]	Time 0.016 (0.019)	Data 0.000 (0.003)	Loss 2.3077 (2.3093)	Prec@1 11.719 (9.758)
+Epoch: [93][100/391]	Time 0.020 (0.018)	Data 0.000 (0.002)	Loss 2.3076 (2.3085)	Prec@1 10.156 (9.785)
+Epoch: [93][150/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3073 (2.3082)	Prec@1 9.375 (9.654)
+Epoch: [93][200/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3072 (2.3080)	Prec@1 8.594 (9.686)
+Epoch: [93][250/391]	Time 0.015 (0.017)	Data 0.000 (0.001)	Loss 2.3070 (2.3078)	Prec@1 11.719 (9.829)
+Epoch: [93][300/391]	Time 0.016 (0.017)	Data 0.000 (0.001)	Loss 2.3075 (2.3077)	Prec@1 5.469 (9.725)
+Epoch: [93][350/391]	Time 0.017 (0.017)	Data 0.000 (0.001)	Loss 2.3067 (2.3076)	Prec@1 10.938 (9.673)
+Test: [0/79]	Time 0.104 (0.104)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:24:05 [INFO] codeq: Epoch 94 — loss=2.3075  train_acc=9.62  val_acc=10.00
+2026-02-27 14:24:05 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:24:05 [INFO] codeq: Epoch 95/100 — lr=8.85637e-06
+Epoch: [94][0/391]	Time 0.174 (0.174)	Data 0.153 (0.153)	Loss 2.3069 (2.3069)	Prec@1 12.500 (12.500)
+Epoch: [94][50/391]	Time 0.022 (0.022)	Data 0.000 (0.003)	Loss 2.3066 (2.3070)	Prec@1 7.812 (10.218)
+Epoch: [94][100/391]	Time 0.017 (0.021)	Data 0.000 (0.002)	Loss 2.3066 (2.3069)	Prec@1 14.844 (10.017)
+Epoch: [94][150/391]	Time 0.017 (0.020)	Data 0.000 (0.001)	Loss 2.3065 (2.3068)	Prec@1 9.375 (9.815)
+Epoch: [94][200/391]	Time 0.018 (0.019)	Data 0.000 (0.001)	Loss 2.3063 (2.3068)	Prec@1 13.281 (9.803)
+Epoch: [94][250/391]	Time 0.020 (0.019)	Data 0.000 (0.001)	Loss 2.3063 (2.3067)	Prec@1 7.031 (9.730)
+Epoch: [94][300/391]	Time 0.015 (0.019)	Data 0.000 (0.001)	Loss 2.3064 (2.3066)	Prec@1 7.812 (9.710)
+Epoch: [94][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3060 (2.3066)	Prec@1 7.812 (9.758)
+Test: [0/79]	Time 0.099 (0.099)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:24:12 [INFO] codeq: Epoch 95 — loss=2.3065  train_acc=9.76  val_acc=10.00
+2026-02-27 14:24:12 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:24:12 [INFO] codeq: Epoch 96/100 — lr=6.15583e-06
+Epoch: [95][0/391]	Time 0.196 (0.196)	Data 0.176 (0.176)	Loss 2.3059 (2.3059)	Prec@1 14.062 (14.062)
+Epoch: [95][50/391]	Time 0.017 (0.022)	Data 0.000 (0.004)	Loss 2.3060 (2.3065)	Prec@1 9.375 (10.156)
+Epoch: [95][100/391]	Time 0.021 (0.020)	Data 0.001 (0.002)	Loss 2.3058 (2.3062)	Prec@1 7.812 (10.002)
+Epoch: [95][150/391]	Time 0.018 (0.020)	Data 0.000 (0.001)	Loss 2.3057 (2.3061)	Prec@1 11.719 (9.960)
+Epoch: [95][200/391]	Time 0.016 (0.019)	Data 0.000 (0.001)	Loss 2.3060 (2.3060)	Prec@1 5.469 (9.783)
+Epoch: [95][250/391]	Time 0.018 (0.019)	Data 0.000 (0.001)	Loss 2.3057 (2.3059)	Prec@1 7.812 (9.867)
+Epoch: [95][300/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3055 (2.3058)	Prec@1 7.812 (9.871)
+Epoch: [95][350/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3052 (2.3057)	Prec@1 9.375 (9.827)
+Test: [0/79]	Time 0.096 (0.096)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.012)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:24:20 [INFO] codeq: Epoch 96 — loss=2.3057  train_acc=9.77  val_acc=10.00
+2026-02-27 14:24:20 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:24:20 [INFO] codeq: Epoch 97/100 — lr=3.94265e-06
+Epoch: [96][0/391]	Time 0.195 (0.195)	Data 0.173 (0.173)	Loss 2.3053 (2.3053)	Prec@1 10.156 (10.156)
+Epoch: [96][50/391]	Time 0.017 (0.022)	Data 0.000 (0.004)	Loss 2.3051 (2.3053)	Prec@1 8.594 (10.309)
+Epoch: [96][100/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3050 (2.3052)	Prec@1 7.812 (10.164)
+Epoch: [96][150/391]	Time 0.018 (0.019)	Data 0.000 (0.001)	Loss 2.3049 (2.3051)	Prec@1 12.500 (10.120)
+Epoch: [96][200/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3048 (2.3050)	Prec@1 10.938 (10.110)
+Epoch: [96][250/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3046 (2.3050)	Prec@1 9.375 (10.013)
+Epoch: [96][300/391]	Time 0.019 (0.018)	Data 0.000 (0.001)	Loss 2.3045 (2.3049)	Prec@1 14.062 (10.042)
+Epoch: [96][350/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3044 (2.3048)	Prec@1 16.406 (10.014)
+Test: [0/79]	Time 0.108 (0.108)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.005 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:24:28 [INFO] codeq: Epoch 97 — loss=2.3048  train_acc=10.00  val_acc=10.00
+2026-02-27 14:24:28 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:24:28 [INFO] codeq: Epoch 98/100 — lr=2.21902e-06
+Epoch: [97][0/391]	Time 0.210 (0.210)	Data 0.190 (0.190)	Loss 2.3043 (2.3043)	Prec@1 8.594 (8.594)
+Epoch: [97][50/391]	Time 0.017 (0.022)	Data 0.000 (0.004)	Loss 2.3043 (2.3044)	Prec@1 7.812 (9.926)
+Epoch: [97][100/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3041 (2.3043)	Prec@1 12.500 (9.769)
+Epoch: [97][150/391]	Time 0.016 (0.019)	Data 0.000 (0.001)	Loss 2.3040 (2.3043)	Prec@1 9.375 (9.789)
+Epoch: [97][200/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3039 (2.3042)	Prec@1 8.594 (9.911)
+Epoch: [97][250/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3039 (2.3041)	Prec@1 7.812 (9.857)
+Epoch: [97][300/391]	Time 0.015 (0.018)	Data 0.000 (0.001)	Loss 2.3038 (2.3041)	Prec@1 12.500 (9.840)
+Epoch: [97][350/391]	Time 0.018 (0.018)	Data 0.000 (0.001)	Loss 2.3037 (2.3040)	Prec@1 15.625 (9.954)
+Test: [0/79]	Time 0.107 (0.107)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:24:36 [INFO] codeq: Epoch 98 — loss=2.3040  train_acc=9.93  val_acc=10.00
+2026-02-27 14:24:36 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:24:36 [INFO] codeq: Epoch 99/100 — lr=9.86636e-07
+Epoch: [98][0/391]	Time 0.174 (0.174)	Data 0.153 (0.153)	Loss 2.3036 (2.3036)	Prec@1 7.812 (7.812)
+Epoch: [98][50/391]	Time 0.021 (0.021)	Data 0.000 (0.004)	Loss 2.3035 (2.3036)	Prec@1 8.594 (10.018)
+Epoch: [98][100/391]	Time 0.019 (0.019)	Data 0.000 (0.002)	Loss 2.3033 (2.3035)	Prec@1 10.156 (10.094)
+Epoch: [98][150/391]	Time 0.018 (0.019)	Data 0.000 (0.001)	Loss 2.3033 (2.3035)	Prec@1 7.812 (9.975)
+Epoch: [98][200/391]	Time 0.019 (0.019)	Data 0.000 (0.001)	Loss 2.3032 (2.3034)	Prec@1 10.156 (10.009)
+Epoch: [98][250/391]	Time 0.017 (0.018)	Data 0.000 (0.001)	Loss 2.3032 (2.3034)	Prec@1 15.625 (10.032)
+Epoch: [98][300/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3031 (2.3033)	Prec@1 12.500 (9.899)
+Epoch: [98][350/391]	Time 0.016 (0.018)	Data 0.000 (0.001)	Loss 2.3031 (2.3033)	Prec@1 10.938 (10.009)
+Test: [0/79]	Time 0.130 (0.130)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.009)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:24:43 [INFO] codeq: Epoch 99 — loss=2.3033  train_acc=10.00  val_acc=10.00
+2026-02-27 14:24:43 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:24:43 [INFO] codeq: Epoch 100/100 — lr=2.46720e-07
+Epoch: [99][0/391]	Time 0.167 (0.167)	Data 0.145 (0.145)	Loss 2.3031 (2.3031)	Prec@1 9.375 (9.375)
+Epoch: [99][50/391]	Time 0.018 (0.021)	Data 0.000 (0.003)	Loss 2.3028 (2.3029)	Prec@1 10.938 (10.218)
+Epoch: [99][100/391]	Time 0.017 (0.019)	Data 0.000 (0.002)	Loss 2.3028 (2.3029)	Prec@1 15.625 (10.442)
+Epoch: [99][150/391]	Time 0.017 (0.019)	Data 0.000 (0.001)	Loss 2.3028 (2.3028)	Prec@1 9.375 (10.539)
+Epoch: [99][200/391]	Time 0.016 (0.019)	Data 0.000 (0.001)	Loss 2.3028 (2.3028)	Prec@1 10.938 (10.467)
+Epoch: [99][250/391]	Time 0.020 (0.019)	Data 0.000 (0.001)	Loss 2.3027 (2.3028)	Prec@1 11.719 (10.411)
+Epoch: [99][300/391]	Time 0.020 (0.019)	Data 0.000 (0.001)	Loss 2.3027 (2.3028)	Prec@1 7.031 (10.172)
+Epoch: [99][350/391]	Time 0.019 (0.019)	Data 0.000 (0.001)	Loss 2.3027 (2.3028)	Prec@1 3.906 (10.052)
+Test: [0/79]	Time 0.108 (0.108)	Loss 2.3026 (2.3026)	Prec@1 8.594 (8.594)
+Test: [50/79]	Time 0.006 (0.008)	Loss 2.3026 (2.3026)	Prec@1 10.156 (10.003)
+ * Prec@1 10.000
+2026-02-27 14:24:52 [INFO] codeq: Epoch 100 — loss=2.3028  train_acc=10.00  val_acc=10.00
+2026-02-27 14:24:52 [DEBUG] codeq: Checkpoint saved: save_temp/checkpoint_mlp_deadzone8b_e100_lr0.001.th
+2026-02-27 14:24:52 [INFO] codeq: Training complete. Best val_acc: 10.00
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33mmlp_deadzone8b_e100_lr0.001[0m at: [34mhttps://wandb.ai/mikkeljanusdahl-k-benhavns-universitet/CoDeQ%20experiments/runs/jrrrrmxo[0m
+[1;34mwandb[0m: Find logs at: [1;35mwandb/run-20260227_141147-jrrrrmxo/logs[0m
