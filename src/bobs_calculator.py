@@ -5,8 +5,6 @@ import torch.nn.utils.parametrize as parametrize
 from src.utils_quantization import FakeQuantParametrization 
 from fvcore.nn import FlopCountAnalysis
 
-DEFAULT_ACTIVATION_BITRATE = 32
-
 @dataclass
 class LayerStat:
     name: str
@@ -16,11 +14,11 @@ class LayerStat:
     output_prunning_ratio: float
     weight_bitrate: int
     MACs_uncompressed: int
+    activation_bitrate: int
     kernel_height: int = 1
     kernel_width: int = 1
     feature_map_height: int = 1
     feature_map_width: int = 1
-    activation_bitrate: int = DEFAULT_ACTIVATION_BITRATE 
 
 @dataclass
 class LayerCompressionStat:
@@ -63,24 +61,19 @@ class ComparisonResults:
         print(f"{'='*55}")
 
 @torch.no_grad()
-def compare_model(compressed_model : NN.Module):
+def compare_model(compressed_model : NN.Module, default_weight_bitrate: int = 8, default_activation_bitrate: int = 8):
     layer_stats = []
     for idx, (name, module) in enumerate(compressed_model.named_modules()):
         if isinstance(module, NN.Linear):
             weights = module.weight
             prunning_ratio, output_ch, input_ch = output_prunning_ratio_linear(weights=weights)
-            weight_bitrate = DEFAULT_ACTIVATION_BITRATE  
-            print(weights)
+            weight_bitrate = default_weight_bitrate
             if parametrize.is_parametrized(module, "weight"):
                 plist = module.parametrizations["weight"]
                 for p in plist:
                     if isinstance(p, FakeQuantParametrization):
                         weight_bitrate = int(p.quantizer.get_bitwidth().item())
-                    else:
-                        print("Is not fake quant")
-            else:
-                print("Skipped layer: ", name)
-            
+
             stats = LayerStat(
                 name=name,
                 idx=idx,
@@ -89,32 +82,31 @@ def compare_model(compressed_model : NN.Module):
                 output_prunning_ratio=prunning_ratio,
                 weight_bitrate=weight_bitrate,
                 MACs_uncompressed=input_ch*output_ch,
+                activation_bitrate=default_activation_bitrate,
             )
             layer_stats.append(stats)
 
-    return calculate_compression_stats(layer_stats=layer_stats)
+    return calculate_compression_stats(layer_stats=layer_stats, default_weight_bitrate=default_weight_bitrate, default_activation_bitrate=default_activation_bitrate)
     
 def output_prunning_ratio_linear(weights: torch.Tensor):
     output_ch,input_ch = weights.shape
-    num_zero_cols = (weights.sum(dim=0) == 0).sum().item()
-    prunning_ratio =  num_zero_cols / output_ch
+    num_zero_rows = (weights.abs().sum(dim=1) == 0).sum().item()
+    prunning_ratio =  num_zero_rows / output_ch
 
     return prunning_ratio, output_ch, input_ch
     
-def calculate_compression_stats(layer_stats : list[LayerStat]):
-    total_BOBs_compressed = 0 
+def calculate_compression_stats(layer_stats : list[LayerStat], default_weight_bitrate: int = 8, default_activation_bitrate: int = 8):
+    total_BOBs_compressed = 0
     total_MACs_compressed = 0
     total_BOBs_uncompressed = 0
     total_MACs_uncompressed = 0
-    layer_compression_stats = [] 
+    layer_compression_stats = []
 
-    for idx, layer in enumerate(layer_stats): 
+    for idx, layer in enumerate(layer_stats):
         if idx == 0:
-            prev_output_prunning_ratio = 0 
-            activation_bitrate =  DEFAULT_ACTIVATION_BITRATE
-        else: 
+            prev_output_prunning_ratio = 0
+        else:
             prev_output_prunning_ratio = layer_stats[idx-1].output_prunning_ratio
-            activation_bitrate = layer.activation_bitrate  
 
         MACs_compressed = (1- prev_output_prunning_ratio) \
         * layer.input_channels \
@@ -123,10 +115,10 @@ def calculate_compression_stats(layer_stats : list[LayerStat]):
         * layer.feature_map_width \
         * layer.feature_map_height \
         * layer.kernel_height \
-        * layer.kernel_width 
+        * layer.kernel_width
 
-        BOBs_compressed = MACs_compressed * activation_bitrate * layer.weight_bitrate
-        BOBs_uncompressed = layer.MACs_uncompressed * activation_bitrate * layer.weight_bitrate 
+        BOBs_compressed = MACs_compressed * layer.activation_bitrate * layer.weight_bitrate
+        BOBs_uncompressed = layer.MACs_uncompressed * default_activation_bitrate * default_weight_bitrate
 
         total_BOBs_compressed += BOBs_compressed 
         total_MACs_compressed += MACs_compressed
