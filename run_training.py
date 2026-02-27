@@ -16,21 +16,7 @@ from src.quantizer import DeadZoneLDZCompander
 from src.datasets import build_dataset_cifar
 from src.train import train, validate, save_checkpoint
 from src.structured_loss import LOSS_REGISTRY
-
-class CifarMLP(nn.Module):
-    def __init__(self, num_classes=10):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(3 * 32 * 32, 120),
-            nn.ReLU(),
-            nn.Linear(120, 84),
-            nn.ReLU(),
-            nn.Linear(84, num_classes),
-        )
-
-    def forward(self, x):
-        return self.net(x.view(x.size(0), -1))
-
+from src.neural_networks import CifarMLP
 
 # ── Registries ──────────────────────────────────────────────
 QUANTIZER_REGISTRY = {

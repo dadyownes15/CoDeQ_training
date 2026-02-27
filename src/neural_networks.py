@@ -3,6 +3,22 @@ import torch.nn as nn
 
 
 
+class CifarMLP(nn.Module):
+    """Simple 3-layer MLP for CIFAR-10: 3072 → 120 → 84 → 10."""
+    def __init__(self, num_classes=10):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(3 * 32 * 32, 120),
+            nn.ReLU(),
+            nn.Linear(120, 84),
+            nn.ReLU(),
+            nn.Linear(84, num_classes),
+        )
+
+    def forward(self, x):
+        return self.net(x.reshape(x.size(0), -1))
+
+
 class MLP_small_fashion_mnist(nn.Module):
     def __init__(self) -> None:
         super().__init__()
