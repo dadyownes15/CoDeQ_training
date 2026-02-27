@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/CoDeQ_training.iml" filepath="$PROJECT_DIR$/.idea/CoDeQ_training.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/CoDeQ.iml" filepath="$PROJECT_DIR$/.idea/CoDeQ.iml" />
+>>>>>>> 45ddf148f69535fd0b72c3d1af24a376ce26ed28
     </modules>
   </component>
 </project>

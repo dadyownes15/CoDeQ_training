@@ -25,4 +25,4 @@ python -c "import torch; print('torch', torch.__version__, 'cuda', torch.version
 
 echo "Starting training..."
 
-python ../run_training.py --config ../configs/deadzone_mlp.yaml --device cuda
+python ../run_training.py --config ../configs/deadzone_mlp.yaml --device cuda --verbose
