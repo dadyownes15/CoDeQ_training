@@ -8,6 +8,8 @@
 
 set -euo pipefail
 
+export PYTHONUNBUFFERED=1
+
 # node/GPU layout
 hostname
 nvidia-smi
