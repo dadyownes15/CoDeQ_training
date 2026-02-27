@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH -p gpu
-#SBATCH --gres=gpu:l40s:1
+#SBATCH --gres=gpu
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=24
 #SBATCH --mem=16G
-#SBATCH --time=6:00:00
+#SBATCH --time=2:00:00
 
 set -euo pipefail
 
@@ -16,7 +16,7 @@ nvidia-smi
 module load miniconda
 module load cuda
 
-conda_environment="qe_max_experiment"
+conda_environment="codeq"
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "$conda_environment"
 
