@@ -1,147 +1,193 @@
-# Training Parameters
+# Training Guide
 
-This document describes all available parameters for the `train.py` training script for CoDeQ.
+This document describes how to use `run_training.py` with YAML config files for CoDeQ experiments.
 
 ## Quick Start
 
 ```bash
-# Basic training (ResNet20 on CIFAR-10)
-python train.py
+# Baseline ResNet-20 (no quantization)
+python run_training.py --config configs/baseline_resnet20.yaml
 
-# With quantization-aware training (QAT)
-python train.py --use-qat 1
+# DeadZone QAT on ResNet-20 with group lasso
+python run_training.py --config configs/deadzone_resnet20.yaml
 
-# Custom model and learning rate
-python train.py --model vit --lr 0.01 --epochs 200
+# DeadZone QAT on MLP
+python run_training.py --config configs/deadzone_mlp.yaml
+
+# Override device for cluster
+python run_training.py --config configs/deadzone_resnet20.yaml --device cuda
+
+# Resume from checkpoint
+python run_training.py --config configs/deadzone_resnet20.yaml --resume save_temp/checkpoint_run.th
 ```
 
-## Parameter Reference
+## CLI Arguments
 
-All parameters are optional and have sensible defaults. They can be combined in any way.
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `--config` | Yes | Path to YAML config file |
+| `--device` | No | Override the `device` field in the YAML (useful for running same config locally vs cluster) |
+| `--resume` | No | Path to checkpoint to resume training from |
 
-### Model Architecture
+## YAML Config Reference
 
-| Parameter | Default | Type | Description |
-|-----------|---------|------|-------------|
-| `--model` | `resnet20` | `str` (choice) | Model architecture to train. Choices: `resnet20`, `vit`, `mlp` |
+### General
 
-**Notes:**
-- `resnet20`: CIFAR-10 ResNet with 20 layers (defined in `resnet.py`)
-- `vit`: Vision Transformer (Tiny ViT, pretrained on ImageNet-21K)
-- `mlp`: Not yet implemented
+```yaml
+model: resnet20          # resnet20, vit, or mlp
+epochs: 300
+batch_size: 128
+img_size: 32             # 32 for CIFAR-10, 224 for ViT
+device: mps              # cuda, mps, or cpu
+wandb_project: "CoDeQ experiments"
+workers: 4
+use_compile: 0           # 1 to enable torch.compile
+save_dir: save_temp
+lr_scheduler: cosine     # cosine annealing with T_max=epochs
+```
 
-### Training Dynamics
+### Quantizer
 
-| Parameter | Default | Type | Description |
-|-----------|---------|------|-------------|
-| `--epochs` | `400` | `int` | Total number of training epochs to run |
-| `--batch-size` or `-b` | `128` | `int` | Mini-batch size for training and validation |
-| `--workers` or `-j` | `4` | `int` | Number of data loading workers (threads) for data loader |
-| `--start-epoch` | `0` | `int` | Manual epoch number for resuming training (used with `--resume`) |
+Omit the `quantizer` block entirely for baseline (no QAT) training.
 
-### Optimization
+```yaml
+quantizer:
+  name: deadzone         # registry lookup (see Quantizer Registry below)
+  kwargs:                # passed directly to quantizer constructor
+    fixed_bit_val: 8
+    max_bits: 8
+    init_deadzone_logit: 3.0
+    init_bit_logit: 3.0
+    learnable_bit: true
+    learnable_deadzone: true
+  exclude_layers: [bn]   # skip layers whose name contains these strings
+```
 
-| Parameter | Default | Type | Description |
-|-----------|---------|------|-------------|
-| `--lr` or `--learning-rate` | `0.1` | `float` | Initial learning rate for the optimizer |
-| `--momentum` | `0.9` | `float` | Momentum for SGD optimizer (ResNet20) |
-| `--weight-decay` or `--wd` | `1e-4` | `float` | L2 weight decay regularization coefficient |
+**Quantizer Registry:**
 
-**Notes:**
-- ResNet20 uses SGD optimizer with momentum
-- ViT uses AdamW optimizer (momentum parameter is ignored)
-- Learning rate is decayed using cosine annealing over the full training epoch range
+| Name | Class | Description |
+|------|-------|-------------|
+| `deadzone` | `DeadZoneLDZCompander` | Dead-zone quantizer with learnable bitwidth and dead-zone parameters (CoDeQ paper) |
+| `uniform` | `UniformSymmetric` | Fixed-bitwidth uniform symmetric quantizer |
 
-### Data & Input
+**DeadZone kwargs:**
 
-| Parameter | Default | Type | Description |
-|-----------|---------|------|-------------|
-| `--img-size` or `--input-size` | `32` | `int` | Input image resolution (width and height). Use 32 for CIFAR-10, 224 for ViT |
+| Kwarg | Default | Description |
+|-------|---------|-------------|
+| `fixed_bit_val` | 4 | Fixed bitwidth when `learnable_bit=false` |
+| `max_bits` | 8 | Maximum bitwidth (range is 2 to max_bits) |
+| `init_deadzone_logit` | 3.0 | Initial logit for dead-zone parameter |
+| `init_bit_logit` | 3.0 | Initial logit for bitwidth parameter |
+| `learnable_bit` | true | Whether bitwidth is learnable |
+| `learnable_deadzone` | true | Whether dead-zone width is learnable |
 
-**Notes:**
-- Must match the model's expected input size
-- ViT is trained on ImageNet (224x224), but can work with 32x32 for CIFAR-10
+**Uniform kwargs:**
 
-### Quantization
+| Kwarg | Default | Description |
+|-------|---------|-------------|
+| `bitwidth` | 8 | Fixed quantization bitwidth |
 
-| Parameter | Default | Type | Description |
-|-----------|---------|------|-------------|
-| `--use-qat` | `0` | `int` (binary) | Enable quantization-aware training (QAT). Set to `1` to enable |
-| `--quantizer-bit` | `8` | `int` | Bit-width for the quantizer (e.g., 8 for 8-bit quantization) |
+**Exclude layers by model:**
+- ResNet-20: `[bn]` (skip batch norm)
+- ViT: `[norm]` (skip layer norm)
+- MLP: `[]` (quantize all layers)
 
-**Notes:**
-- When `--use-qat 1`, the training script attaches fake quantizers to model weights
-- ResNet20 quantizes all layers except batch normalization (`bn`)
-- ViT quantizes all layers except normalization layers (`norm`)
-- Quantizer is `UniformSymmetric` with the specified bit-width
+### Optimizer
 
-### Checkpointing & Resuming
+The optimizer supports a 3-way parameter group split for DeadZone QAT. When using `deadzone` quantizer, the model parameters are automatically split into:
+- **base** — all standard model weights
+- **dz** — dead-zone logit parameters (`logit_dz`), typically high weight decay to encourage sparsity
+- **bit** — bitwidth logit parameters (`logit_bit`)
 
-| Parameter | Default | Type | Description |
-|-----------|---------|------|-------------|
-| `--resume` | `''` (none) | `str` | Path to checkpoint file to resume training from |
-| `--save-dir` | `save_temp` | `str` | Directory where checkpoints and models will be saved |
+```yaml
+optimizer:
+  type: adamw            # adamw, adam, or sgd
+  param_groups:
+    base:
+      lr: 0.001
+      weight_decay: 0.0
+    dz:                  # optional, only used when deadzone quantizer creates logit_dz params
+      lr: 0.001
+      weight_decay: 2.5
+    bit:                 # optional, only used when deadzone quantizer creates logit_bit params
+      lr: 0.001
+      weight_decay: 0.0
+```
 
-**Notes:**
-- If checkpoint exists, training resumes from that epoch with restored optimizer and scheduler state
-- Checkpoints are saved every epoch with the format: `checkpoint_{wandb_run_name}.th`
-- Each checkpoint contains: model state, optimizer state, scheduler state, epoch number, and best accuracy
+For baseline (no QAT), only the `base` group is needed:
 
-### Hardware & Performance
+```yaml
+optimizer:
+  type: sgd
+  param_groups:
+    base:
+      lr: 0.1
+      momentum: 0.9
+      weight_decay: 0.0001
+```
 
-| Parameter | Default | Type | Description |
-|-----------|---------|------|-------------|
-| `--device` | `mps` | `str` (choice) | Computing device. Choices: `cuda` (NVIDIA), `mps` (Apple Silicon), `cpu` |
-| `--use-compile` | `0` | `int` (binary) | Enable PyTorch 2.x compilation for performance optimization. Set to `1` to enable |
+### Loss Terms
 
-**Notes:**
-- `mps`: Metal Performance Shaders (macOS with Apple Silicon)
-- `cuda`: NVIDIA GPUs
-- `cpu`: CPU-only training (very slow)
-- When `--use-compile 1`, uses "max-autotune" mode with full-graph disabled
+The base loss is always `CrossEntropyLoss` (hardcoded in `train()`). The `loss_terms` list adds **additional regularization terms** on top:
 
-### Logging & Monitoring
+```
+total_loss = CE_loss + lambda_1 * loss_fn_1(model) + lambda_2 * loss_fn_2(model) + ...
+```
 
-| Parameter | Default | Type | Description |
-|-----------|---------|------|-------------|
-| `--wandb` | `Uncategorized` | `str` | Weights & Biases project name for experiment tracking |
+Omit `loss_terms` entirely for pure CE training.
 
-**Notes:**
-- Requires `.env` file with `WANDB_API_KEY` set
-- Logs are saved with key: `epoch`, `loss`, `train_acc`, `val_acc`
-- Each run is automatically named and checkpoints are tagged with the run name
+```yaml
+loss_terms:
+  - name: group_lasso   # registry lookup (see Loss Registry below)
+    lambda: 1.0         # scalar multiplier for this term
+    kwargs:              # passed to the loss function
+      lambda_linear: 0.1
+      lambda_conv: 0.1
+```
 
-## Example Commands
+**Loss Registry:**
+
+| Name | Function | Description |
+|------|----------|-------------|
+| `group_lasso` | `group_lasso(model, lambda_linear, lambda_conv)` | Group L2/L1 structured sparsity. Computes L2 norm per column, then sums. Pushes entire input features/channels to zero. Works on both `nn.Linear` and `nn.Conv2d`. |
+
+**Group lasso kwargs:**
+
+| Kwarg | Default | Description |
+|-------|---------|-------------|
+| `lambda_linear` | 1e-4 | Regularization strength for `nn.Linear` layers |
+| `lambda_conv` | 1e-4 | Regularization strength for `nn.Conv2d` layers |
+
+Set either to `0.0` to disable for that layer type. For ViT, you'd typically set `lambda_conv: 0.0` since only the patch embedding is Conv2d.
+
+## Models
+
+| Name | Architecture | Input | Description |
+|------|-------------|-------|-------------|
+| `resnet20` | ResNet-20 | 32x32 | CIFAR-10 ResNet (option A shortcuts) |
+| `vit` | ViT-Tiny-Patch16 | 224x224 | Vision Transformer from timm |
+| `mlp` | 3072→120→84→10 | 32x32 | Simple 3-layer MLP with ReLU |
+
+## Slurm
 
 ```bash
-# ResNet20 basic training
-python train.py --epochs 200 --batch-size 256
-
-# ResNet20 with QAT (8-bit quantization)
-python train.py --use-qat 1 --quantizer-bit 8 --epochs 300
-
-# ViT with higher learning rate for fine-tuning
-python train.py --model vit --lr 0.001 --img-size 224 --epochs 100
-
-# Resume from checkpoint with modified learning rate
-python train.py --resume save_temp/checkpoint_run_123.th --lr 0.01 --epochs 100
-
-# GPU training with compilation enabled
-python train.py --device cuda --use-compile 1 --epochs 400
-
-# Custom directory and W&B project
-python train.py --save-dir my_experiments --wandb my_project_name
+python ../run_training.py --config ../configs/deadzone_resnet20.yaml --device cuda
 ```
 
-## Environment Requirements
+See `slurm/single_slurm.sh` for a full example.
 
-- **`.env` file** (optional): Must contain `WANDB_API_KEY` if using W&B logging
-- **CUDA** (optional): Required if `--device cuda` is used
-- **PyTorch 2.0+** (optional): Required for `--use-compile 1`
+## Extending
 
-## Notes
+**Add a new quantizer:** Define the `nn.Module` class (must accept kwargs in constructor, implement `forward(w) -> w_hat`), then add it to `QUANTIZER_REGISTRY` in `run_training.py`.
 
-- All defaults are tuned for CIFAR-10 training on ResNet20
-- The script automatically adjusts optimizer and scheduler based on the selected model
-- Checkpoints are saved every epoch; only the best checkpoint is marked separately
-- Training automatically adjusts CUDA settings (tf32, cudnn.benchmark) when using NVIDIA GPUs
+**Add a new loss term:** Define `fn(model, **kwargs) -> scalar tensor` in `src/structured_loss.py`, then add it to `LOSS_REGISTRY`.
+
+**Add a new model:** Add an `elif` branch in the model dispatch section of `main()` in `run_training.py`.
+
+## Example Configs
+
+See `configs/` for ready-to-use examples:
+- `baseline_resnet20.yaml` — SGD, no QAT
+- `deadzone_resnet20.yaml` — AdamW, DeadZone QAT, group lasso
+- `deadzone_vit.yaml` — AdamW, DeadZone QAT for ViT
+- `deadzone_mlp.yaml` — AdamW, DeadZone QAT for MLP
