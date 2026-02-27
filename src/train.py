@@ -6,7 +6,7 @@ import torch.optim
 import torch.utils.data
 
 
-def train(train_loader, model, criterion, optimizer, epoch, device):
+def train(train_loader, model, criterion, optimizer, epoch, device, loss_fns=None):
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
@@ -29,6 +29,11 @@ def train(train_loader, model, criterion, optimizer, epoch, device):
         # compute output
         output = model(input)
         loss = criterion(output, target)
+
+        # add structured loss terms
+        if loss_fns:
+            for loss_fn, weight, kwargs in loss_fns:
+                loss = loss + weight * loss_fn(model, **kwargs)
 
         # compute gradient and step optimizer
         optimizer.zero_grad()
