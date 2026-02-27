@@ -17,6 +17,7 @@ from src.quantizer import DeadZoneLDZCompander
 from src.datasets import build_dataset_cifar
 from src.train import train, validate, save_checkpoint
 from src.structured_loss import LOSS_REGISTRY
+from src.bobs_calculator import compare_model
 from src.neural_networks import CifarMLP
 
 # ── Registries ──────────────────────────────────────────────
@@ -252,12 +253,21 @@ def main():
         logger.info("Epoch %d — loss=%.4f  train_acc=%.2f  val_acc=%.2f%s",
                      epoch + 1, loss, train_acc, prec1, "  [BEST]" if is_best else "")
 
-        wandb.log({
+        # ── BOBs evaluation ─────────────────────────────────
+        log_dict = {
             "epoch": epoch,
             "loss": loss,
             "train_acc": train_acc,
             "val_acc": prec1,
-        })
+        }
+        if q_cfg:
+            bobs_result = compare_model(model)
+            log_dict["bobs/total_compression_rate"] = bobs_result.total_bobs_compression_rate
+            for layer in bobs_result.layer_results:
+                log_dict[f"bobs/layer/{layer.name}"] = layer.BOBs_compression_rate
+            bobs_result.print()
+
+        wandb.log(log_dict)
 
         ckpt_path = os.path.join(save_dir, f"checkpoint_{run_name}.th")
         save_checkpoint({

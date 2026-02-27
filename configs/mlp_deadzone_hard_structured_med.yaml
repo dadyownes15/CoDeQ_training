@@ -1,0 +1,42 @@
+model: mlp
+epochs: 100
+batch_size: 128
+img_size: 32
+device: mps
+wandb_project: "CoDeQ experiments"
+workers: 4
+use_compile: 0
+save_dir: save_temp
+
+lr_scheduler: cosine
+
+quantizer:
+  name: deadzone
+  kwargs:
+    fixed_bit_val: 8
+    max_bits: 8
+    init_deadzone_logit: 3.0
+    init_bit_logit: 3.0
+    learnable_bit: false
+    learnable_deadzone: true
+  exclude_layers: []
+
+optimizer:
+  type: adamw
+  param_groups:
+    base:
+      lr: 0.001
+      weight_decay: 0.0
+    dz:
+      lr: 0.001
+      weight_decay: 5.0
+    bit:
+      lr: 0.001
+      weight_decay: 0.0
+
+loss_terms:
+  - name: group_lasso
+    lambda: 1.0
+    kwargs:
+      lambda_linear: 0.001
+      lambda_conv: 0.0
