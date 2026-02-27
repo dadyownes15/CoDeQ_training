@@ -25,8 +25,5 @@ conda activate "$conda_environment"
 which python
 python -c "import torch; print('torch', torch.__version__, 'cuda', torch.version.cuda, 'cudnn', torch.backends.cudnn.version())"
 
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-
 echo "Starting training..."
-
-python "$REPO_ROOT/run_training.py" --config "$REPO_ROOT/configs/deadzone_mlp.yaml" --device cuda --verbose
+python run_training.py --config configs/baseline_mlp.yaml --device cuda

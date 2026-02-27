@@ -1,0 +1,18 @@
+model: mlp
+epochs: 100
+batch_size: 128
+img_size: 32
+device: mps
+wandb_project: "CoDeQ experiments"
+workers: 4
+use_compile: 0
+save_dir: save_temp
+
+lr_scheduler: cosine
+
+optimizer:
+  type: adamw
+  param_groups:
+    base:
+      lr: 0.001
+      weight_decay: 0.0
