@@ -13,12 +13,12 @@ hostname
 nvidia-smi
 
 # Load modules & conda
-module load miniconda
+module load miniconda/py39_25.9.1-1
 module load cuda
 
-conda_environment="qe_max_experiment"
+# Create env once: conda create -n codeq python=3.11 && conda activate codeq && pip install -r ../requirements.txt
 source "$(conda info --base)/etc/profile.d/conda.sh"
-conda activate "$conda_environment"
+conda activate codeq
 
 which python
 python -c "import torch; print('torch', torch.__version__, 'cuda', torch.version.cuda, 'cudnn', torch.backends.cudnn.version())"
