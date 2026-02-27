@@ -61,3 +61,27 @@ def toggle_quantization(model, enabled: bool) -> None:
                 for p in param_list:
                     if isinstance(p, FakeQuantParametrization):
                         p.enabled = enabled
+
+class RoundSTE(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, input):
+        return torch.round(input)
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        return grad_output
+
+
+class UniformSymmetric(nn.Module):
+    """ uniform symmetric quantizer """
+    def __init__(self, bitwidth=8):
+        super().__init__()
+        self.bitwidth = bitwidth
+    
+    def forward(self, weight):
+        with torch.no_grad():
+            absmax = torch.max(torch.abs(weight))
+        Q = 2 ** (self.bitwidth - 1) - 1
+        s = absmax / Q
+        return s * torch.clamp(RoundSTE.apply(weight / s), -Q, Q)
+    
