@@ -260,7 +260,7 @@ def main():
             "train_acc": train_acc,
             "val_acc": prec1,
         }
-        if q_cfg:
+        if cfg.get("eval_bobs", False):
             bobs_result = compare_model(model)
             log_dict["bobs/total_compression_rate"] = bobs_result.total_bobs_compression_rate
             for layer in bobs_result.layer_results:

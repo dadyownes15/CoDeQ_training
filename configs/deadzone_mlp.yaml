@@ -7,6 +7,7 @@ wandb_project: "CoDeQ experiments"
 workers: 4
 use_compile: 0
 save_dir: save_temp
+eval_bobs: true
 
 lr_scheduler: cosine
 
