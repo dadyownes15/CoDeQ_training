@@ -3,3 +3,6 @@ torchvision
 numpy
 matplotlib
 wandb
+pyyaml
+python-dotenv
+timm

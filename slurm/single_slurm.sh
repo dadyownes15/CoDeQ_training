@@ -25,16 +25,4 @@ python -c "import torch; print('torch', torch.__version__, 'cuda', torch.version
 
 echo "Starting training..."
 
-python ../train.py \
-  --wandb "test runs" \
-  --device "cuda" \
-  --workers 6 \
-  --use-compile 1 \
-  --use-qat 0 \
-  --quantizer-bit 8 \
-  --model "vit" \
-  --img-size 224 \
-  --epochs 200 \
-  --lr 0.0003 \
-  --wd 0.01 \
-  --batch-size 128
+python ../run_training.py --config ../configs/deadzone_vit.yaml --device cuda
