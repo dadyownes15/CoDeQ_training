@@ -1,0 +1,109 @@
+hendrixgpu10fl.unicph.domain
+Fri Feb 27 16:39:22 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 570.86.15              Driver Version: 570.86.15      CUDA Version: 12.8     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA TITAN Xp                Off |   00000000:18:00.0 Off |                  N/A |
+| 23%   29C    P8              9W /  250W |       3MiB /  12288MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Loaded miniconda shell environment for bash
+/home/xdg178/.conda/envs/codeq/bin/python
+/home/xdg178/.conda/envs/codeq/lib/python3.11/site-packages/torch/cuda/__init__.py:435: UserWarning: 
+    Found GPU0 NVIDIA TITAN Xp which is of cuda capability 6.1.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.0) - (12.0)
+    
+  queued_call()
+/home/xdg178/.conda/envs/codeq/lib/python3.11/site-packages/torch/cuda/__init__.py:435: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  queued_call()
+/home/xdg178/.conda/envs/codeq/lib/python3.11/site-packages/torch/cuda/__init__.py:435: UserWarning: 
+NVIDIA TITAN Xp with CUDA capability sm_61 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_70 sm_75 sm_80 sm_86 sm_90 sm_100 sm_120.
+If you want to use the NVIDIA TITAN Xp GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  queued_call()
+torch 2.10.0+cu128 cuda 12.8 cudnn 91002
+=== Launching 8 MLP dead-zone sweep runs in parallel ===
+Starting: configs/mlp_deadzone_soft.yaml
+Starting: configs/mlp_deadzone_hard.yaml
+Starting: configs/mlp_deadzone_soft_structured_low.yaml
+Starting: configs/mlp_deadzone_hard_structured_low.yaml
+Starting: configs/mlp_deadzone_soft_structured_med.yaml
+Starting: configs/mlp_deadzone_hard_structured_med.yaml
+Starting: configs/mlp_deadzone_soft_structured_high.yaml
+Starting: configs/mlp_deadzone_hard_structured_high.yaml
+All 8 runs launched. PIDs: 807825 807826 807827 807828 807829 807830 807831 807832
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+    from src.bobs_calculator import compare_model    
+from src.bobs_calculator import compare_model
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+        from src.bobs_calculator import compare_modelfrom src.bobs_calculator import compare_model
+
+        from src.bobs_calculator import compare_modelfrom src.bobs_calculator import compare_model
+
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+      File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+from src.bobs_calculator import compare_model
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+    from src.bobs_calculator import compare_model
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+                from fvcore.nn import FlopCountAnalysis    from fvcore.nn import FlopCountAnalysisfrom fvcore.nn import FlopCountAnalysis    from fvcore.nn import FlopCountAnalysis
+    from fvcore.nn import FlopCountAnalysis
+    
+from fvcore.nn import FlopCountAnalysisfrom fvcore.nn import FlopCountAnalysis
+
+from fvcore.nn import FlopCountAnalysis
+
+
+ModuleNotFoundErrorModuleNotFoundError: ModuleNotFoundError: ModuleNotFoundErrorModuleNotFoundErrorNo module named 'fvcore'ModuleNotFoundErrorModuleNotFoundError: No module named 'fvcore': : ModuleNotFoundErrorNo module named 'fvcore'
+: : 
+No module named 'fvcore'No module named 'fvcore': 
+No module named 'fvcore'No module named 'fvcore'
+
+No module named 'fvcore'
+
+
+FAILED: PID 807825
+FAILED: PID 807826
+FAILED: PID 807827
+FAILED: PID 807828
+FAILED: PID 807829
+FAILED: PID 807830
+FAILED: PID 807831
+FAILED: PID 807832
+8 / 8 runs failed.

@@ -3,7 +3,6 @@ import torch
 import torch.nn as NN
 import torch.nn.utils.parametrize as parametrize
 from src.utils_quantization import FakeQuantParametrization 
-from fvcore.nn import FlopCountAnalysis
 
 @dataclass
 class LayerStat:

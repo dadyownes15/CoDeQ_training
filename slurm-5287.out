@@ -1,0 +1,49 @@
+hendrixgpu09fl.unicph.domain
+Fri Feb 27 16:39:09 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 570.86.15              Driver Version: 570.86.15      CUDA Version: 12.8     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA TITAN X (Pascal)        Off |   00000000:02:00.0 Off |                  N/A |
+| 23%   24C    P8              9W /  250W |       3MiB /  12288MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Loaded miniconda shell environment for bash
+/home/xdg178/.conda/envs/codeq/bin/python
+/home/xdg178/.conda/envs/codeq/lib/python3.11/site-packages/torch/cuda/__init__.py:435: UserWarning: 
+    Found GPU0 NVIDIA TITAN X (Pascal) which is of cuda capability 6.1.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.0) - (12.0)
+    
+  queued_call()
+/home/xdg178/.conda/envs/codeq/lib/python3.11/site-packages/torch/cuda/__init__.py:435: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  queued_call()
+/home/xdg178/.conda/envs/codeq/lib/python3.11/site-packages/torch/cuda/__init__.py:435: UserWarning: 
+NVIDIA TITAN X (Pascal) with CUDA capability sm_61 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_70 sm_75 sm_80 sm_86 sm_90 sm_100 sm_120.
+If you want to use the NVIDIA TITAN X (Pascal) GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  queued_call()
+torch 2.10.0+cu128 cuda 12.8 cudnn 91002
+Starting training...
+Traceback (most recent call last):
+  File "/home/xdg178/CoDeQ_training/run_training.py", line 20, in <module>
+    from src.bobs_calculator import compare_model
+  File "/home/xdg178/CoDeQ_training/src/bobs_calculator.py", line 6, in <module>
+    from fvcore.nn import FlopCountAnalysis
+ModuleNotFoundError: No module named 'fvcore'
